@@ -1,0 +1,3 @@
+[submodule "ShawEngine/vendor/spdlog"]
+	path = ShawEngine/vendor/spdlog
+	url = git@github.com:gabime/spdlog.git

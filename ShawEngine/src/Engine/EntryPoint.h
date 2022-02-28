@@ -8,7 +8,7 @@
 		SE_CORE_INFO("ShawEngine is intialized!");
 		SE_CLIENT_TRACE("Application started!");
 		auto app = ShawEngine::CreateApplication();	//Applictaion.h在Engine.h中会被提前引用
-		app->Run();
+		app->Run();		//app指向的是AppStart类型的指针
 		delete app;
 	}
 

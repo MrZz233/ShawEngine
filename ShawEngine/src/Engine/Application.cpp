@@ -1,3 +1,4 @@
+#include "sepch.h"
 #include "Application.h"
 #include "Engine/Events/Event_Application.h"
 #include "Engine/Log.h"

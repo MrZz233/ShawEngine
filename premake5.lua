@@ -17,6 +17,9 @@ project "ShawEngine"
 	targetdir("bin/"..outputdir.."/%{prj.name}")
 	objdir("bin-int/"..outputdir.."/%{prj.name}")
 	
+	pchheader "sepch.h"
+	pchsource "ShawEngine/src/sepch.cpp"
+
 	files{
 		"%{prj.name}/src/**.h",
 		"%{prj.name}/src/**.cpp"

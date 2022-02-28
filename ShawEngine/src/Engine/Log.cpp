@@ -1,3 +1,4 @@
+#include "sepch.h"
 #include "Log.h"
 
 namespace ShawEngine {

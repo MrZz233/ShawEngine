@@ -60,10 +60,8 @@ namespace ShawEngine {
 			//与运算，若category在当前分类中，则返回非零
 			return GetCategoryFlags() & category;
 		}
-
-	protected:
 		//事件处理标志
-		bool m_Handled = false;
+		bool Handled = false;
 	};
 
 	//EventDispatcher事件调度类
@@ -83,7 +81,7 @@ namespace ShawEngine {
 		{
 			if (m_Event.GetEventType() == T::GetStaticType())	//属于该事件
 			{
-				m_Event.m_Handled = func(*(T*)&m_Event);	//执行该事件
+				m_Event.Handled = func(*(T*)&m_Event);	//执行该事件
 				return true;
 			}
 			return false;

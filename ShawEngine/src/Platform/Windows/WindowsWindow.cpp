@@ -4,6 +4,7 @@
 #include "Engine/Events/Event_Application.h"
 #include "Engine/Events/Event_Key.h"
 #include "Engine/Events/Event_Mouse.h"
+#include "glad/glad.h"
 
 namespace ShawEngine {
 	
@@ -49,6 +50,11 @@ namespace ShawEngine {
 		//创建glfw窗口
 		m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
 		glfwMakeContextCurrent(m_Window);
+
+		//初始化glad
+		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+		SE_CORE_ASSERT(status, "Failed to intialize Glad...");
+
 		//Set将用户数据m_Data和m_Window相关联
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 		SetVSync(true);

@@ -11,8 +11,10 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 IncludeDir = {}
 IncludeDir["GLFW"] = "ShawEngine/vendor/GLFW/include"
+IncludeDir["Glad"] = "ShawEngine/vendor/Glad/include"
 
 include "ShawEngine/vendor/GLFW"		--将GLFW中的premake复制过来
+include "ShawEngine/vendor/Glad"
 
 project "ShawEngine"
 	location "ShawEngine"
@@ -33,11 +35,13 @@ project "ShawEngine"
 	includedirs{
 		"%{prj.name}/src",
 		"%{prj.name}/vendor/spdlog/include",
-		"%{IncludeDir.GLFW}"
+		"%{IncludeDir.GLFW}",
+		"%{IncludeDir.Glad}"
 	}
 
 	links{
 		"GLFW",
+		"Glad",
 		"opengl32.lib"
 	}
 
@@ -49,6 +53,7 @@ project "ShawEngine"
 		defines{
 			"SE_PLATFORM_WINDOWS",
 			"SE_BUILD_DLL",
+			"GLFW_INCLUDE_NONE"
 		}
 
 		postbuildcommands{
@@ -57,14 +62,17 @@ project "ShawEngine"
 
 	filter "configurations:Debug"
 		defines "SE_DEBUG"
+		buildoptions "/MDd"
 		symbols "On"
 	
 	filter "configurations:Release"
 		defines "SE_RELEASE"
+		buildoptions "/MD"
 		symbols "On"
 
 	filter "configurations:Dist"
 		defines "SE_DIST"
+		buildoptions "/MD"
 		symbols "On"
 
 project "AppStart"
@@ -100,12 +108,15 @@ project "AppStart"
 
 	filter "configurations:Debug"
 		defines "SE_DEBUG"
+		buildoptions "/MDd"
 		symbols "On"
 	
 	filter "configurations:Release"
 		defines "SE_RELEASE"
+		buildoptions "/MD"
 		symbols "On"
 
 	filter "configurations:Dist"
 		defines "SE_DIST"
+		buildoptions "/MD"
 		symbols "On"

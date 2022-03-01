@@ -79,9 +79,9 @@ namespace ShawEngine {
 		}
 
 		template<typename T>
-		bool Dispatch(EventFn<T> func)	//收到一个事件
+		bool Dispatch(EventFn<T> func)	//执行该事件对应的函数
 		{
-			if (m_Event.GetEventType() == T::GetStaticType())	//
+			if (m_Event.GetEventType() == T::GetStaticType())	//属于该事件
 			{
 				m_Event.m_Handled = func(*(T*)&m_Event);	//执行该事件
 				return true;

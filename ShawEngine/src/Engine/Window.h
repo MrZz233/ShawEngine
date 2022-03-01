@@ -12,6 +12,7 @@ namespace ShawEngine {
 		unsigned int Width;
 		unsigned int Height;
 
+		//默认窗口字段
 		WindowProps(const std::string& title = "ShawEngine",
 			        unsigned int width = 1280,
 			        unsigned int height = 720)
@@ -20,10 +21,11 @@ namespace ShawEngine {
 		}
 	};
 
-	// Interface representing a desktop system based Window
+	//窗口基类
 	class SE_API Window
 	{
 	public:
+		//回调
 		using EventCallbackFn = std::function<void(Event&)>;
 
 		virtual ~Window() {}
@@ -38,6 +40,7 @@ namespace ShawEngine {
 		virtual void SetVSync(bool enabled) = 0;
 		virtual bool IsVSync() const = 0;
 
+		//函数声明，不同的平台需要实现各自的Create()，目前有Windows
 		static Window* Create(const WindowProps& props = WindowProps());
 	};
 

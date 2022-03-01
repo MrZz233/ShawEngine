@@ -12,9 +12,11 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 IncludeDir = {}
 IncludeDir["GLFW"] = "ShawEngine/vendor/GLFW/include"
 IncludeDir["Glad"] = "ShawEngine/vendor/Glad/include"
+IncludeDir["ImGui"] = "ShawEngine/vendor/imgui"
 
 include "ShawEngine/vendor/GLFW"		--将GLFW中的premake复制过来
 include "ShawEngine/vendor/Glad"
+include "ShawEngine/vendor/imgui"
 
 project "ShawEngine"
 	location "ShawEngine"
@@ -36,13 +38,15 @@ project "ShawEngine"
 		"%{prj.name}/src",
 		"%{prj.name}/vendor/spdlog/include",
 		"%{IncludeDir.GLFW}",
-		"%{IncludeDir.Glad}"
+		"%{IncludeDir.Glad}",
+		"%{IncludeDir.ImGui}"
 	}
 
 	links{
 		"GLFW",
 		"Glad",
-		"opengl32.lib"
+		"ImGui",
+		"opengl32.lib",	
 	}
 
 	filter "system:windows"

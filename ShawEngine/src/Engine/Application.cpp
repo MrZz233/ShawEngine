@@ -6,7 +6,13 @@
 namespace ShawEngine {
 #define BIND_EVENT_FN(x) std::bind(&x,this,std::placeholders::_1)
 
+	Application* Application::s_Instance = nullptr;
+
 	Application::Application() {
+
+		SE_CORE_ASSERT(!s_Instance, "Application already exists!");
+		s_Instance = this;
+
 		m_Windows = std::unique_ptr<Window>(Window::Create());
 		m_Windows->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
 
@@ -19,10 +25,12 @@ namespace ShawEngine {
 
 	void Application::PushLayer(Layer* layer) {
 		m_LayerStack.PushLayer(layer);
+		layer->OnAttach();
 	}
 
 	void Application::PushOverLay(Layer* layer) {
 		m_LayerStack.PushOverlay(layer);
+		layer->OnAttach();
 	}
 
 	void Application::OnEvent(Event& e) {

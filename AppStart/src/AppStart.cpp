@@ -22,6 +22,7 @@ class AppStart :public ShawEngine::Application {
 public:
 	AppStart() {
 		PushLayer(new ExampleLayer());
+		PushOverLay(new ShawEngine::ImGuiLayer());
 	}
 
 	~AppStart() {

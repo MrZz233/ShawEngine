@@ -17,11 +17,18 @@ namespace ShawEngine {
 
 		void PushLayer(Layer* layer);
 		void PushOverLay(Layer* layer);
+
+		inline Window& GetWindow() { return *m_Windows; }
+
+		inline static Application& Get() { return *s_Instance; }
+
 	private:
 		bool OnClosed(WindowCloseEvent&);
 		std::unique_ptr<Window> m_Windows;
 		bool m_Running;
 		LayerStack m_LayerStack;
+
+		static Application* s_Instance;
 	};
 
 

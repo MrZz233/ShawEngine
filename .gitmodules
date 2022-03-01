@@ -1,3 +1,6 @@
 [submodule "ShawEngine/vendor/spdlog"]
-	path = ShawEngine/vendor/spdlog
-	url = git@github.com:gabime/spdlog.git
+	path = Hazel/vendor/spdlog
+	url =  git@github.com:gabime/spdlog.git
+[submodule "ShawEngine/vendor/GLFW"]
+	path = ShawEngine/vendor/GLFW
+	url = git@github.com:TheCherno/glfw.git

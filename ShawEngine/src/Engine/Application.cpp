@@ -2,20 +2,20 @@
 #include "Application.h"
 #include "Engine/Events/Event_Application.h"
 #include "Engine/Log.h"
+#include "GLFW/glfw3.h"
 
 namespace ShawEngine {
 	Application::Application() {
-
+		m_Windows = std::unique_ptr<Window>(Window::Create());
 	}
 	Application::~Application() {
 
 	}
 	void Application::Run() {
-		WindowResizeEvent event_window_resize(1280, 720);
-		SE_CLIENT_TRACE(event_window_resize);
-
-		while (true) {
-
+		while (m_Runing) {
+			glClearColor(1, 0, 1, 1);
+			glClear(GL_COLOR_BUFFER_BIT);
+			m_Windows->OnUpdate();
 		}
 	}
 	

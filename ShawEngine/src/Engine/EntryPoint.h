@@ -2,7 +2,7 @@
 //#include "Application.h"
 
 #ifdef SE_PLATFORM_WINDOWS
-	
+
 	int main(int argc, char** argv) {
 		ShawEngine::Log::Init();
 		SE_CORE_INFO("ShawEngine is intialized!");

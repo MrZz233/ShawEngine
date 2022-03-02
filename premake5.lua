@@ -1,13 +1,11 @@
 workspace "ShawEngine"
 	architecture "x64"
-
+	startproject "AppStart"
 	configurations{
 		"Debug",
 		"Release",
 		"Dist"
 	}
-	
-	startproject "AppStart"
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
@@ -21,7 +19,6 @@ group "Dependencies"
 	include "ShawEngine/vendor/GLFW"	--将GLFW中的premake复制过来
 	include "ShawEngine/vendor/Glad"
 	include "ShawEngine/vendor/imgui"
-
 group ""
 
 project "ShawEngine"
@@ -67,7 +64,6 @@ project "ShawEngine"
 			"SE_PLATFORM_WINDOWS",
 			"SE_BUILD_DLL",
 			"GLFW_INCLUDE_NONE"
-
 		}
 
 		postbuildcommands{
@@ -83,7 +79,7 @@ project "ShawEngine"
 	filter "configurations:Release"
 		defines "SE_RELEASE"
 		runtime "Release"
-		symbols "On"
+		optimize "On"
 
 	filter "configurations:Dist"
 		defines "SE_DIST"
@@ -107,6 +103,7 @@ project "AppStart"
 	includedirs{
 		"ShawEngine/vendor/spdlog/include",
 		"ShawEngine/src",
+		"ShawEngine/vendor",
 		"%{IncludeDir.glm}"
 	}
 
@@ -130,7 +127,7 @@ project "AppStart"
 	filter "configurations:Release"
 		defines "SE_RELEASE"
 		runtime "Release"
-		symbols "On"
+		optimize "On"
 
 	filter "configurations:Dist"
 		defines "SE_DIST"

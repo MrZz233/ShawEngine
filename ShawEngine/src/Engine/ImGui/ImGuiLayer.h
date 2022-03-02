@@ -10,22 +10,14 @@ namespace ShawEngine {
 		ImGuiLayer();
 		~ImGuiLayer();
 
-		void OnAttach() override;
-		void OnDetach() override;
-		void OnUpdate() override;
-		void OnEvent(Event& event) override;
-		
-	private:
-		bool OnMouseButtonPressed(MouseButtonPressedEvent&);
-		bool OnMouseButtonReleased(MouseButtonReleasedEvent&);
-		bool OnMouseMoved(MouseMovedEvent&);
-		bool OnMouseSrolled(MouseScrolledEvent&);
-		bool OnKeyPressed(KeyPressedEvent&);
-		bool OnKeyReleased(KeyReleasedEvent&);
-		bool OnKeyTyped(KeyTypedEvent&);
-		bool OnWindowResized(WindowResizeEvent&);
+		virtual void OnAttach() override;
+		virtual void OnDetach() override;
+		virtual void OnImGuiRender() override;
 
+		void Begin();
+		void End();
+
+	private:
 		float m_Time = 0.0f;
-		bool needRender = true;
 	};
 }

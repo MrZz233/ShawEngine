@@ -4,6 +4,7 @@
 #include "Engine/Events/Event.h"
 #include "Engine/Events/Event_Application.h"
 #include "Engine/LayerStack.h"
+#include "Engine/ImGui/ImGuiLayer.h"
 
 namespace ShawEngine {
 	class SE_API Application
@@ -25,6 +26,7 @@ namespace ShawEngine {
 	private:
 		bool OnClosed(WindowCloseEvent&);
 		std::unique_ptr<Window> m_Windows;
+		ImGuiLayer* m_ImGuiLayer;
 		bool m_Running;
 		LayerStack m_LayerStack;
 

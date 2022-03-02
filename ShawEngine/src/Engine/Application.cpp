@@ -17,8 +17,8 @@ namespace ShawEngine {
 		m_Windows = std::unique_ptr<Window>(Window::Create());
 		m_Windows->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
 
-		unsigned int id;
-		glGenVertexArrays(1, &id);
+		m_ImGuiLayer = new ImGuiLayer();
+		PushOverLay(m_ImGuiLayer);
 	}
 	Application::~Application() {
 
@@ -56,10 +56,16 @@ namespace ShawEngine {
 		while (m_Running) {
 			glClearColor(1, 0, 1, 1);
 			glClear(GL_COLOR_BUFFER_BIT);
-			//auto [x, y] = Input::GetMousePosition();
-			//SE_CORE_TRACE("Mouse_X:{0} _Y:", x, y);
+
 			for (Layer* layer : m_LayerStack)
 				layer->OnUpdate();
+
+			//äÖÈ¾ImGui
+			m_ImGuiLayer->Begin();
+			for (Layer* layer : m_LayerStack)
+				layer->OnImGuiRender();
+			m_ImGuiLayer->End();
+
 			m_Windows->OnUpdate();
 		}
 	}

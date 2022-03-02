@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "Engine/Log.h"
 #include "glad/glad.h"
+#include "Engine/Input.h"
 
 namespace ShawEngine {
 #define BIND_EVENT_FN(x) std::bind(&x,this,std::placeholders::_1)
@@ -55,7 +56,8 @@ namespace ShawEngine {
 		while (m_Running) {
 			glClearColor(1, 0, 1, 1);
 			glClear(GL_COLOR_BUFFER_BIT);
-
+			//auto [x, y] = Input::GetMousePosition();
+			//SE_CORE_TRACE("Mouse_X:{0} _Y:", x, y);
 			for (Layer* layer : m_LayerStack)
 				layer->OnUpdate();
 			m_Windows->OnUpdate();

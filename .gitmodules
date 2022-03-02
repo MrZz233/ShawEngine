@@ -4,3 +4,6 @@
 [submodule "ShawEngine/vendor/GLFW"]
 	path = ShawEngine/vendor/GLFW
 	url = git@github.com:TheCherno/glfw.git
+[submodule "ShawEngine/vendor/glm"]
+	path = ShawEngine/vendor/glm
+	url = git@github.com:g-truc/glm.git

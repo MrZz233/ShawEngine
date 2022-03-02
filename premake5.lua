@@ -15,6 +15,7 @@ IncludeDir = {}
 IncludeDir["GLFW"] = "ShawEngine/vendor/GLFW/include"
 IncludeDir["Glad"] = "ShawEngine/vendor/Glad/include"
 IncludeDir["ImGui"] = "ShawEngine/vendor/imgui"
+IncludeDir["glm"] = "ShawEngine/vendor/glm"
 
 group "Dependencies"
 	include "ShawEngine/vendor/GLFW"	--将GLFW中的premake复制过来
@@ -37,7 +38,9 @@ project "ShawEngine"
 
 	files{
 		"%{prj.name}/src/**.h",
-		"%{prj.name}/src/**.cpp"
+		"%{prj.name}/src/**.cpp",
+		"%{prj.name}/vendor/glm/glm/**.hpp",
+		"%{prj.name}/vendor/glm/glm/**.inl",
 	}
 
 	includedirs{
@@ -45,7 +48,8 @@ project "ShawEngine"
 		"%{prj.name}/vendor/spdlog/include",
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.Glad}",
-		"%{IncludeDir.ImGui}"
+		"%{IncludeDir.ImGui}",
+		"%{IncludeDir.glm}"
 	}
 
 	links{
@@ -102,7 +106,8 @@ project "AppStart"
 
 	includedirs{
 		"ShawEngine/vendor/spdlog/include",
-		"ShawEngine/src"
+		"ShawEngine/src",
+		"%{IncludeDir.glm}"
 	}
 
 	links{

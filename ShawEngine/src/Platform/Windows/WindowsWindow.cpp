@@ -99,6 +99,13 @@ namespace ShawEngine {
 				}
 			}
 		});
+
+		glfwSetCharCallback(m_Window, [](GLFWwindow* window, unsigned int keycode) {
+			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+			KeyTypedEvent e(keycode);
+			data.EventCallback(e);
+		});
+
 		//鼠标按键
 		glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* window, int button,int action, int mods) {
 			//Get获取与当前window相关联的用户数据指针

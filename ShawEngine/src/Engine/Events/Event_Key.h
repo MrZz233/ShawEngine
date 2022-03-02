@@ -63,4 +63,21 @@ namespace ShawEngine {
 		//通过宏快速实现事件枚举相关
 		EVENT_CLASS_TYPE(KeyReleased)
 	};
+
+	class SE_API KeyTypedEvent : public KeyEvent
+	{
+	public:
+		KeyTypedEvent(int keycode)
+			:KeyEvent(keycode) {}
+
+		std::string ToString() const override
+		{
+			std::stringstream ss;
+			ss << "KeyTypedEvent:" << m_KeyCode;
+			return ss.str();
+		}
+
+		EVENT_CLASS_TYPE(KeyTyped)
+	};
+
 }

@@ -43,7 +43,6 @@ namespace ShawEngine {
 			if (e.Handled)
 				break;
 		}
-
 	}
 
 	bool Application::OnClosed(WindowCloseEvent& e) {

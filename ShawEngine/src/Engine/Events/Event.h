@@ -14,7 +14,7 @@ namespace ShawEngine {
 		//以下的事件枚举都是一个类，以Event为基类，
 		WindowClose, WindowResize, WindowFocus, WindowLostFocus, WindowMoved,	//窗口
 		AppTick, AppUpdate, AppRender,											//引擎
-		KeyPressed, KeyReleased,												//按键
+		KeyPressed, KeyReleased,KeyTyped,										//按键
 		MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled		//鼠标
 	};
 

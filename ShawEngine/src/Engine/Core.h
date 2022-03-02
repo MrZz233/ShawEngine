@@ -10,6 +10,10 @@
 	#error ShawEngine only supports Windows now!
 #endif
 
+#ifdef SE_DEBUG
+	#define SE_ENABLE_ASSERTS
+#endif
+
 #ifdef SE_ENABLE_ASSERTS
 	#define SE_CLIENT_ASSERT(x, ...) { if(!(x)) { SE_CLIENT_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
 	#define SE_CORE_ASSERT(x, ...) { if(!(x)) { SE_CORE_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }

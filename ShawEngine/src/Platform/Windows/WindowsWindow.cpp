@@ -4,7 +4,7 @@
 #include "Engine/Events/Event_Application.h"
 #include "Engine/Events/Event_Key.h"
 #include "Engine/Events/Event_Mouse.h"
-#include "glad/glad.h"
+#include "Platform/OpenGL/OpenGLContext.h"
 
 namespace ShawEngine {
 	
@@ -51,9 +51,8 @@ namespace ShawEngine {
 		m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
 		glfwMakeContextCurrent(m_Window);
 
-		//初始化glad
-		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-		SE_CORE_ASSERT(status, "Failed to intialize Glad...");
+		m_Context = new OpenGLContext(m_Window);
+		m_Context->Init();
 
 		//Set将用户数据m_Data和m_Window相关联
 		glfwSetWindowUserPointer(m_Window, &m_Data);
@@ -148,7 +147,7 @@ namespace ShawEngine {
 	void WindowsWindow::OnUpdate()
 	{
 		glfwPollEvents();
-		glfwSwapBuffers(m_Window);
+		m_Context->SwapBuffers();
 	}
 
 	void WindowsWindow::SetVSync(bool enabled)

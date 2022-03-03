@@ -1,5 +1,4 @@
 #pragma once
-
 //供AppStart使用
 #include "Engine/Application.h"
 //提供日志系统

@@ -23,9 +23,9 @@ group ""
 
 project "ShawEngine"
 	location "ShawEngine"
-	kind "SharedLib"
-	language "C++"
-	staticruntime "off"
+	kind "StaticLib"
+	cppdialect "C++17"
+	staticruntime "on"
 
 	targetdir("bin/"..outputdir.."/%{prj.name}")
 	objdir("bin-int/"..outputdir.."/%{prj.name}")
@@ -38,6 +38,10 @@ project "ShawEngine"
 		"%{prj.name}/src/**.cpp",
 		"%{prj.name}/vendor/glm/glm/**.hpp",
 		"%{prj.name}/vendor/glm/glm/**.inl",
+	}
+
+	defines{
+		"_CRT_SECURE_NO_WARNINGS"
 	}
 
 	includedirs{
@@ -57,7 +61,6 @@ project "ShawEngine"
 	}
 
 	filter "system:windows"
-		cppdialect "C++17"
 		systemversion "latest"
 
 		defines{
@@ -66,31 +69,31 @@ project "ShawEngine"
 			"GLFW_INCLUDE_NONE"
 		}
 
-		postbuildcommands{
+		--postbuildcommands{
 			--("{COPY} %{cfg.buildtarget.relpath} ../bin/"..outputdir.."/AppStart")
-			("{COPY} %{cfg.buildtarget.relpath} \"../bin/" .. outputdir .. "/AppStart/\"")
-		}
+			--("{COPY} %{cfg.buildtarget.relpath} \"../bin/" .. outputdir .. "/AppStart/\"")
+		--}
 
 	filter "configurations:Debug"
 		defines "SE_DEBUG"
 		runtime "Debug"
-		symbols "On"
+		symbols "on"
 	
 	filter "configurations:Release"
 		defines "SE_RELEASE"
 		runtime "Release"
-		optimize "On"
+		optimize "on"
 
 	filter "configurations:Dist"
 		defines "SE_DIST"
 		runtime "Release"
-		optimize "On"
+		optimize "on"
 
 project "AppStart"
 	location "AppStart"
 	kind "ConsoleApp"
-	language "C++"
-	staticruntime "off"
+	cppdialect "C++17"
+	staticruntime "on"
 
 	targetdir("bin/"..outputdir.."/%{prj.name}")
 	objdir("bin-int/"..outputdir.."/%{prj.name}")
@@ -112,7 +115,6 @@ project "AppStart"
 	}
 
 	filter "system:windows"
-		cppdialect "C++17"
 		systemversion "latest"
 
 		defines{
@@ -122,14 +124,14 @@ project "AppStart"
 	filter "configurations:Debug"
 		defines "SE_DEBUG"
 		runtime "Debug"
-		symbols "On"
+		symbols "on"
 	
 	filter "configurations:Release"
 		defines "SE_RELEASE"
 		runtime "Release"
-		optimize "On"
+		optimize "on"
 
 	filter "configurations:Dist"
 		defines "SE_DIST"
 		runtime "Release"
-		optimize "On"
+		optimize "on"

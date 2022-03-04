@@ -67,21 +67,19 @@ namespace ShawEngine {
 	//EventDispatcher事件调度类
 	class EventDispatcher
 	{
-		template<typename T>
-		using EventFn = std::function<bool(T&)>;	//EventFn<事件>表示一个函数，参数是事件，返回bool
-
+		
 	public:
 		EventDispatcher(Event& event)
 			: m_Event(event)
 		{
 		}
 
-		template<typename T>
-		bool Dispatch(EventFn<T> func)	//执行该事件对应的函数
+		template<typename T, typename F>
+		bool Dispatch(const F& func)	//执行该事件对应的函数
 		{
 			if (m_Event.GetEventType() == T::GetStaticType())	//属于该事件
 			{
-				m_Event.Handled = func(*(T*)&m_Event);	//执行该事件
+				m_Event.Handled = func(static_cast<T&>(m_Event));	//执行该事件
 				return true;
 			}
 			return false;

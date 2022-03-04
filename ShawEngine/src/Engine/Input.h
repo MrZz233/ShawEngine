@@ -6,7 +6,11 @@ namespace ShawEngine {
 
 	class SE_API Input
 	{
+	
 	public:
+		Input(const Input&) = delete;
+		Input& operator=(const Input&) = delete;
+
 		//用户使用，屏蔽具体平台
 		inline static bool IsKeyPressed(int keycode) { return s_Instance->IsKeyPressedImpl(keycode); }
 		
@@ -16,6 +20,7 @@ namespace ShawEngine {
 		inline static float GetMouseY() { return s_Instance->GetMouseYImpl(); }
 	
 	protected:
+		Input() = default;
 		//由不同的子类实现
 		virtual bool IsKeyPressedImpl(int keycode) = 0;
 		

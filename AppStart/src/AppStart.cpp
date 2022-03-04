@@ -1,6 +1,8 @@
 #include <Engine.h>
 #include "imgui/imgui.h"
-#include "glm/gtc/matrix_transform.hpp""
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include "Platform/OpenGL/OpenGLShader.h"
 
 class ExampleLayer :public ShawEngine::Layer {
 public:
@@ -25,7 +27,7 @@ public:
 
 		//创建一个VBO
 		//VertexBuffer的成员有 m_RendererID(VBO)、m_Layout
-		std::shared_ptr<ShawEngine::VertexBuffer> vertexBuffer;
+		ShawEngine::Ref<ShawEngine::VertexBuffer> vertexBuffer;
 		//将原始顶点数据vertices送入VBO
 		vertexBuffer.reset(ShawEngine::VertexBuffer::Create(vertices, sizeof(vertices)));
 		//设置好布局，方便设置VBO的顶点属性
@@ -40,7 +42,7 @@ public:
 
 		//创建一个EBO
 		//IndexBuffer的成员有 m_RendererID(EBO)、m_Count
-		std::shared_ptr<ShawEngine::IndexBuffer> indexBuffer;
+		ShawEngine::Ref<ShawEngine::IndexBuffer> indexBuffer;
 		//将原始索引数据indices送入EBO
 		indexBuffer.reset(ShawEngine::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
 		//VAO绑定EBO
@@ -49,24 +51,25 @@ public:
 
 #pragma region 方形VAO
 		//顶点数据
-		float squareVertices[3 * 4] = {
-			-0.5f, -0.5f, 0.0f,
-			 0.5f, -0.5f, 0.0f,
-			 0.5f,  0.5f, 0.0f,
-			-0.5f,  0.5f, 0.0f
+		float squareVertices[5 * 4] = {
+			-0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
+			 0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+			 0.5f,  0.5f, 0.0f, 1.0f, 1.0f,
+			-0.5f,  0.5f, 0.0f, 0.0f, 1.0f
 		};
 		//索引数据
 		uint32_t squareIndices[6] = { 0, 1, 2, 2, 3, 0 };
 
 		//创建第二个VAO、VBO、EBO等
 		m_SquareVA.reset(ShawEngine::VertexArray::Create());
-		std::shared_ptr<ShawEngine::VertexBuffer> squareVB;
+		ShawEngine::Ref<ShawEngine::VertexBuffer> squareVB;
 		squareVB.reset(ShawEngine::VertexBuffer::Create(squareVertices, sizeof(squareVertices)));
 		squareVB->SetLayout({
-			{ ShawEngine::ShaderDataType::Float3, "a_Position" }
+			{ ShawEngine::ShaderDataType::Float3, "a_Position" },
+			{ ShawEngine::ShaderDataType::Float2, "a_TexCoord" }
 			});
 		m_SquareVA->AddVertexBuffer(squareVB);
-		std::shared_ptr<ShawEngine::IndexBuffer> squareIB;
+		ShawEngine::Ref<ShawEngine::IndexBuffer> squareIB;
 		squareIB.reset(ShawEngine::IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint32_t)));
 		m_SquareVA->SetIndexBuffer(squareIB);
 #pragma endregion 
@@ -104,10 +107,10 @@ public:
 		)";
 #pragma endregion
 		//设置Shader
-		m_Shader.reset(new ShawEngine::Shader(vertexSrc, fragmentSrc));
+		m_Shader.reset(ShawEngine::Shader::Create(vertexSrc, fragmentSrc));
 
 #pragma region ShaderSource2
-		std::string blueShaderVertexSrc = R"(
+		std::string flatColorShaderVertexSrc = R"(
 			#version 330 core
 			
 			layout(location = 0) in vec3 a_Position;
@@ -121,19 +124,55 @@ public:
 			}
 		)";
 
-		std::string blueShaderFragmentSrc = R"(
+		std::string flatColorShaderFragmentSrc = R"(
 			#version 330 core
 			
 			layout(location = 0) out vec4 color;
-			in vec3 v_Position;
+			uniform vec3 u_Color;
 			void main()
 			{
-				color = vec4(0.2, 0.3, 0.8, 1.0);
+				color = vec4(u_Color, 1.0);
 			}
 		)";
 #pragma endregion
 		//设置Shader
-		m_BlueShader.reset(new ShawEngine::Shader(blueShaderVertexSrc, blueShaderFragmentSrc));
+		m_FlatColorShader.reset(ShawEngine::Shader::Create(flatColorShaderVertexSrc, flatColorShaderFragmentSrc));
+	
+		std::string textureShaderVertexSrc = R"(
+			#version 330 core
+			
+			layout(location = 0) in vec3 a_Position;
+			layout(location = 1) in vec2 a_TexCoord;
+			uniform mat4 u_ViewProjection;
+			uniform mat4 u_Transform;
+			out vec2 v_TexCoord;
+			void main()
+			{
+				v_TexCoord = a_TexCoord;
+				gl_Position = u_ViewProjection * u_Transform * vec4(a_Position, 1.0);	
+			}
+		)";
+
+		std::string textureShaderFragmentSrc = R"(
+			#version 330 core
+			
+			layout(location = 0) out vec4 color;
+			in vec2 v_TexCoord;
+			
+			uniform sampler2D u_Texture;
+			void main()
+			{
+				color = texture(u_Texture, v_TexCoord);
+			}
+		)";
+
+		m_TextureShader.reset(ShawEngine::Shader::Create(textureShaderVertexSrc, textureShaderFragmentSrc));
+
+		m_Texture = ShawEngine::Texture2D::Create("assets/textures/Checkerboard.png");
+
+		std::dynamic_pointer_cast<ShawEngine::OpenGLShader>(m_TextureShader)->Bind();
+		std::dynamic_pointer_cast<ShawEngine::OpenGLShader>(m_TextureShader)->UploadUniformInt("u_Texture", 0);
+
 	}
 
 	//更新函数
@@ -163,24 +202,34 @@ public:
 		//渲染20*20个方形
 		//缩放0.1
 		glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
+
+		std::dynamic_pointer_cast<ShawEngine::OpenGLShader>(m_FlatColorShader)->Bind();
+		std::dynamic_pointer_cast<ShawEngine::OpenGLShader>(m_FlatColorShader)->UploadUniformFloat3("u_Color", m_SquareColor);
+
 		for (int y = 0; y < 20; y++)
 		{
 			for (int x = 0; x < 20; x++)
 			{
 				glm::vec3 pos(x * 0.11f, y * 0.11f, 0.0f);
 				glm::mat4 transform = glm::translate(glm::mat4(1.0f), pos) * scale;
-				ShawEngine::Renderer::Submit(m_BlueShader, m_SquareVA, transform);
+				ShawEngine::Renderer::Submit(m_FlatColorShader, m_SquareVA, transform);
+				
 			}
 		}
 		//渲染三角形
-		ShawEngine::Renderer::Submit(m_Shader, m_VertexArray);
+		//ShawEngine::Renderer::Submit(m_Shader, m_VertexArray);
+		m_Texture->Bind();
+		ShawEngine::Renderer::Submit(m_TextureShader, m_SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
+
 		//渲染完毕
 		ShawEngine::Renderer::EndScene();
 	}
 
 	virtual void OnImGuiRender() override
 	{
-		
+		ImGui::Begin("Settings");
+		ImGui::ColorEdit3("Square Color", glm::value_ptr(m_SquareColor));
+		ImGui::End();
 	}
 
 	void OnEvent(ShawEngine::Event& event) override {
@@ -189,19 +238,22 @@ public:
 
 	private:
 		//三角形的Shader和VAO
-		std::shared_ptr<ShawEngine::Shader> m_Shader;
-		std::shared_ptr<ShawEngine::VertexArray> m_VertexArray;
+		ShawEngine::Ref<ShawEngine::Shader> m_Shader;
+		ShawEngine::Ref<ShawEngine::VertexArray> m_VertexArray;
 
 		//方形的Shader和VAO
-		std::shared_ptr<ShawEngine::Shader> m_BlueShader;
-		std::shared_ptr<ShawEngine::VertexArray> m_SquareVA;
+		ShawEngine::Ref<ShawEngine::Shader> m_FlatColorShader, m_TextureShader;
+		ShawEngine::Ref<ShawEngine::VertexArray> m_SquareVA;
 
 		//摄像机
+		ShawEngine::Ref<ShawEngine::Texture2D> m_Texture;
 		ShawEngine::OrthographicCamera m_Camera;
 		glm::vec3 m_CameraPosition;
 		float m_CameraMoveSpeed = 5.0f;
 		float m_CameraRotation = 0.0f;
 		float m_CameraRotationSpeed = 180.0f;
+
+		glm::vec3 m_SquareColor = { 0.2f, 0.3f, 0.8f };
 };
 
 

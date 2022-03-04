@@ -14,6 +14,7 @@ IncludeDir["GLFW"] = "ShawEngine/vendor/GLFW/include"
 IncludeDir["Glad"] = "ShawEngine/vendor/Glad/include"
 IncludeDir["ImGui"] = "ShawEngine/vendor/imgui"
 IncludeDir["glm"] = "ShawEngine/vendor/glm"
+IncludeDir["stb_image"] = "ShawEngine/vendor/stb_image"
 
 group "Dependencies"
 	include "ShawEngine/vendor/GLFW"	--将GLFW中的premake复制过来
@@ -38,6 +39,8 @@ project "ShawEngine"
 		"%{prj.name}/src/**.cpp",
 		"%{prj.name}/vendor/glm/glm/**.hpp",
 		"%{prj.name}/vendor/glm/glm/**.inl",
+		"%{prj.name}/vendor/stb_image/**.h",
+		"%{prj.name}/vendor/stb_image/**.cpp",
 	}
 
 	defines{
@@ -50,7 +53,8 @@ project "ShawEngine"
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.Glad}",
 		"%{IncludeDir.ImGui}",
-		"%{IncludeDir.glm}"
+		"%{IncludeDir.glm}",
+		"%{IncludeDir.stb_image}"
 	}
 
 	links{

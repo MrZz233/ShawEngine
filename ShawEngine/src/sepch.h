@@ -10,6 +10,7 @@
 #include <vector>
 #include <unordered_map>
 #include <unordered_set>
+#include "Engine/Log.h"
 
 #ifdef SE_PLATFORM_WINDOWS
 	#include <windows.h>

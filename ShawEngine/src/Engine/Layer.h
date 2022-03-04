@@ -1,5 +1,6 @@
 #pragma once
 #include "Engine/Core.h"
+#include "Engine/Core/Timestep.h"
 #include "Engine/Events/Event.h"
 
 namespace ShawEngine {
@@ -8,11 +9,11 @@ namespace ShawEngine {
 	{
 	public:
 		Layer(const std::string& name = "Layer");
-		virtual ~Layer();
+		virtual ~Layer() = default;
 
 		virtual void OnAttach() {}
 		virtual void OnDetach() {}
-		virtual void OnUpdate() {}
+		virtual void OnUpdate(Timestep ts) {}
 		virtual void OnImGuiRender() {}
 		virtual void OnEvent(Event& event) {}
 

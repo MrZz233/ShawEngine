@@ -2,6 +2,7 @@
 
 #include "Engine/Core.h"
 #include "Layer.h"
+#include <vector>
 
 namespace ShawEngine {
 

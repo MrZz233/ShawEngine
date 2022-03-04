@@ -8,9 +8,4 @@ namespace ShawEngine {
 	{
 	}
 
-	Layer::~Layer()
-	{
-
-	}
-
 }

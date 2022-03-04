@@ -8,7 +8,7 @@ namespace ShawEngine {
 	class SE_API ImGuiLayer :public Layer {
 	public:
 		ImGuiLayer();
-		~ImGuiLayer();
+		~ImGuiLayer() = default;
 
 		virtual void OnAttach() override;
 		virtual void OnDetach() override;

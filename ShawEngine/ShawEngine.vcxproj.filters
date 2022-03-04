@@ -7,14 +7,23 @@
     <Filter Include="src\Engine">
       <UniqueIdentifier>{12A1320E-FE58-745B-6760-4DB753370F4C}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Engine\Core">
+      <UniqueIdentifier>{AA407579-16CC-E23D-1FDD-65328BE73E3E}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Engine\Events">
       <UniqueIdentifier>{B624EAB0-223B-E846-6BB2-7368D707B9CE}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\Engine\ImGui">
       <UniqueIdentifier>{BC1B88A8-A814-A7FA-D146-8C7FBD9E8606}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Engine\Renderer">
+      <UniqueIdentifier>{F838018B-649A-DE98-ED07-254B59681558}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Platform">
       <UniqueIdentifier>{21CA02E5-0D2D-9289-B6B2-CA3FA2F45D0C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Platform\OpenGL">
+      <UniqueIdentifier>{35A49437-A105-7245-2A73-B8F796D3A804}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\Platform\Windows">
       <UniqueIdentifier>{5B054582-4794-CE4B-F0B2-E246DC20DFF1}</UniqueIdentifier>
@@ -50,6 +59,9 @@
     </ClInclude>
     <ClInclude Include="src\Engine\Core.h">
       <Filter>src\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Core\Timestep.h">
+      <Filter>src\Engine\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\EntryPoint.h">
       <Filter>src\Engine</Filter>
@@ -87,8 +99,44 @@
     <ClInclude Include="src\Engine\MouseButtonCodes.h">
       <Filter>src\Engine</Filter>
     </ClInclude>
+    <ClInclude Include="src\Engine\Renderer\Buffer.h">
+      <Filter>src\Engine\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Renderer\GraphicsContext.h">
+      <Filter>src\Engine\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Renderer\OrthographicCamera.h">
+      <Filter>src\Engine\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Renderer\RenderCommand.h">
+      <Filter>src\Engine\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Renderer\Renderer.h">
+      <Filter>src\Engine\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Renderer\RendererAPI.h">
+      <Filter>src\Engine\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Renderer\Shader.h">
+      <Filter>src\Engine\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Renderer\VertexArray.h">
+      <Filter>src\Engine\Renderer</Filter>
+    </ClInclude>
     <ClInclude Include="src\Engine\Window.h">
       <Filter>src\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\OpenGL\OpenGLRendererAPI.h">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\OpenGL\OpenGLVertexArray.h">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\OpenGL\OpenGlBuffer.h">
+      <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\Windows\WindowsInput.h">
       <Filter>src\Platform\Windows</Filter>
@@ -720,10 +768,16 @@
     <ClInclude Include="vendor\glm\glm\ext\vector_int1.hpp">
       <Filter>vendor\glm\glm\ext</Filter>
     </ClInclude>
+    <ClInclude Include="vendor\glm\glm\ext\vector_int1_precision.hpp">
+      <Filter>vendor\glm\glm\ext</Filter>
+    </ClInclude>
     <ClInclude Include="vendor\glm\glm\ext\vector_int1_sized.hpp">
       <Filter>vendor\glm\glm\ext</Filter>
     </ClInclude>
     <ClInclude Include="vendor\glm\glm\ext\vector_int2.hpp">
+      <Filter>vendor\glm\glm\ext</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\glm\glm\ext\vector_int2_precision.hpp">
       <Filter>vendor\glm\glm\ext</Filter>
     </ClInclude>
     <ClInclude Include="vendor\glm\glm\ext\vector_int2_sized.hpp">
@@ -732,10 +786,16 @@
     <ClInclude Include="vendor\glm\glm\ext\vector_int3.hpp">
       <Filter>vendor\glm\glm\ext</Filter>
     </ClInclude>
+    <ClInclude Include="vendor\glm\glm\ext\vector_int3_precision.hpp">
+      <Filter>vendor\glm\glm\ext</Filter>
+    </ClInclude>
     <ClInclude Include="vendor\glm\glm\ext\vector_int3_sized.hpp">
       <Filter>vendor\glm\glm\ext</Filter>
     </ClInclude>
     <ClInclude Include="vendor\glm\glm\ext\vector_int4.hpp">
+      <Filter>vendor\glm\glm\ext</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\glm\glm\ext\vector_int4_precision.hpp">
       <Filter>vendor\glm\glm\ext</Filter>
     </ClInclude>
     <ClInclude Include="vendor\glm\glm\ext\vector_int4_sized.hpp">
@@ -768,10 +828,16 @@
     <ClInclude Include="vendor\glm\glm\ext\vector_uint1.hpp">
       <Filter>vendor\glm\glm\ext</Filter>
     </ClInclude>
+    <ClInclude Include="vendor\glm\glm\ext\vector_uint1_precision.hpp">
+      <Filter>vendor\glm\glm\ext</Filter>
+    </ClInclude>
     <ClInclude Include="vendor\glm\glm\ext\vector_uint1_sized.hpp">
       <Filter>vendor\glm\glm\ext</Filter>
     </ClInclude>
     <ClInclude Include="vendor\glm\glm\ext\vector_uint2.hpp">
+      <Filter>vendor\glm\glm\ext</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\glm\glm\ext\vector_uint2_precision.hpp">
       <Filter>vendor\glm\glm\ext</Filter>
     </ClInclude>
     <ClInclude Include="vendor\glm\glm\ext\vector_uint2_sized.hpp">
@@ -780,10 +846,16 @@
     <ClInclude Include="vendor\glm\glm\ext\vector_uint3.hpp">
       <Filter>vendor\glm\glm\ext</Filter>
     </ClInclude>
+    <ClInclude Include="vendor\glm\glm\ext\vector_uint3_precision.hpp">
+      <Filter>vendor\glm\glm\ext</Filter>
+    </ClInclude>
     <ClInclude Include="vendor\glm\glm\ext\vector_uint3_sized.hpp">
       <Filter>vendor\glm\glm\ext</Filter>
     </ClInclude>
     <ClInclude Include="vendor\glm\glm\ext\vector_uint4.hpp">
+      <Filter>vendor\glm\glm\ext</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\glm\glm\ext\vector_uint4_precision.hpp">
       <Filter>vendor\glm\glm\ext</Filter>
     </ClInclude>
     <ClInclude Include="vendor\glm\glm\ext\vector_uint4_sized.hpp">
@@ -883,6 +955,9 @@
       <Filter>vendor\glm\glm\gtc</Filter>
     </ClInclude>
     <ClInclude Include="vendor\glm\glm\gtc\reciprocal.hpp">
+      <Filter>vendor\glm\glm\gtc</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\glm\glm\gtc\reciprocal.inl">
       <Filter>vendor\glm\glm\gtc</Filter>
     </ClInclude>
     <ClInclude Include="vendor\glm\glm\gtc\round.hpp">
@@ -1344,12 +1419,6 @@
     <ClInclude Include="vendor\glm\glm\vector_relational.hpp">
       <Filter>vendor\glm\glm</Filter>
     </ClInclude>
-    <ClInclude Include="src\Engine\Renderer\GraphicsContext.h" />
-    <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h" />
-    <ClInclude Include="src\Engine\Renderer\Shader.h" />
-    <ClInclude Include="src\Engine\Renderer\Buffer.h" />
-    <ClInclude Include="src\Platform\OpenGL\OpenGlBuffer.h" />
-    <ClInclude Include="src\Engine\Renderer\Renderer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Engine\Application.cpp">
@@ -1370,6 +1439,39 @@
     <ClCompile Include="src\Engine\Log.cpp">
       <Filter>src\Engine</Filter>
     </ClCompile>
+    <ClCompile Include="src\Engine\Renderer\Buffer.cpp">
+      <Filter>src\Engine\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Renderer\OrthographicCamera.cpp">
+      <Filter>src\Engine\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Renderer\RenderCommand.cpp">
+      <Filter>src\Engine\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Renderer\Renderer.cpp">
+      <Filter>src\Engine\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Renderer\RendererAPI.cpp">
+      <Filter>src\Engine\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Renderer\Shader.cpp">
+      <Filter>src\Engine\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Renderer\VertexArrray.cpp">
+      <Filter>src\Engine\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\OpenGL\OpenGLRendererAPI.cpp">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\OpenGL\OpenGLVertexArray.cpp">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClCompile>
     <ClCompile Include="src\Platform\Windows\WindowsInput.cpp">
       <Filter>src\Platform\Windows</Filter>
     </ClCompile>
@@ -1379,10 +1481,5 @@
     <ClCompile Include="src\sepch.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp" />
-    <ClCompile Include="src\Engine\Renderer\Shader.cpp" />
-    <ClCompile Include="src\Engine\Renderer\Buffer.cpp" />
-    <ClCompile Include="src\Engine\Renderer\Render.cpp" />
-    <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp" />
   </ItemGroup>
 </Project>

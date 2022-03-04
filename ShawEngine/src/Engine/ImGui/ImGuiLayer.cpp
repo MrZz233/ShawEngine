@@ -1,19 +1,21 @@
 #include "sepch.h"
 #include "ImGuiLayer.h"
+
 #include "imgui.h"
 #include "examples/imgui_impl_glfw.h"
 #include "examples/imgui_impl_opengl3.h"
+
 #include "Engine/Application.h"
 
-#include <glad/glad.h>
+// TEMPORARY
 #include <GLFW/glfw3.h>
+#include <glad/glad.h>
 
 namespace ShawEngine {
-#define BIND_EVENT_FN(x) std::bind(&x,this,std::placeholders::_1)
-	ImGuiLayer::ImGuiLayer(): Layer("ImGuiLayer"){
-	}
 
-	ImGuiLayer::~ImGuiLayer() {
+	ImGuiLayer::ImGuiLayer()
+		: Layer("ImGuiLayer")
+	{
 	}
 
 	void ImGuiLayer::OnAttach()

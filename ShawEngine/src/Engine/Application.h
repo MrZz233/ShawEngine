@@ -4,16 +4,16 @@
 #include "Engine/Events/Event.h"
 #include "Engine/Events/Event_Application.h"
 #include "Engine/LayerStack.h"
+
+#include "Engine/Core/Timestep.h"
 #include "Engine/ImGui/ImGuiLayer.h"
-#include "Engine/Renderer/Shader.h"
-#include "Engine/Renderer/Buffer.h"
 
 namespace ShawEngine {
-	class SE_API Application
+	class Application
 	{
 	public:
 		Application();
-		virtual ~Application();
+		virtual ~Application() = default;
 
 		void Run();	
 		void OnEvent(Event&);
@@ -24,20 +24,18 @@ namespace ShawEngine {
 		inline Window& GetWindow() { return *m_Windows; }
 
 		inline static Application& Get() { return *s_Instance; }
-
+		bool OnWindowClose(WindowCloseEvent& e);
 	private:
 		bool OnClosed(WindowCloseEvent&);
 		std::unique_ptr<Window> m_Windows;
 		ImGuiLayer* m_ImGuiLayer;
-		bool m_Running;
+		bool m_Running = true;
 		LayerStack m_LayerStack;
-		unsigned int m_VertexArray;
-		std::unique_ptr<VertexBuffer> m_VertexBuffer;
-		std::unique_ptr<IndexBuffer> m_IndexBuffer;
-		std::unique_ptr<Shader> m_Shader;
+		float m_LastFrameTime = 0.0f;
+
 		static Application* s_Instance;
 	};
 
-
+	//用户定义
 	extern Application* CreateApplication();
 }

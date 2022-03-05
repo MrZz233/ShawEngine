@@ -23,10 +23,16 @@ namespace ShawEngine {
 		std::string source = ReadFile(filepath);
 		auto shaderSources = PreProcess(source);
 		Compile(shaderSources);
+		// Extract name from filepath
+		auto lastSlash = filepath.find_last_of("/\\");
+		lastSlash = lastSlash == std::string::npos ? 0 : lastSlash + 1;
+		auto lastDot = filepath.rfind('.');
+		auto count = lastDot == std::string::npos ? filepath.size() - lastSlash : lastDot - lastSlash;
+		m_Name = filepath.substr(lastSlash, count);
 	}
 
-	OpenGLShader::OpenGLShader(const std::string& vertexSrc, const std::string& fragmentSrc)
-	{
+	OpenGLShader::OpenGLShader(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc)
+		: m_Name(name) {
 		std::unordered_map<GLenum, std::string> sources;
 		sources[GL_VERTEX_SHADER] = vertexSrc;
 		sources[GL_FRAGMENT_SHADER] = fragmentSrc;
@@ -41,7 +47,7 @@ namespace ShawEngine {
 	std::string OpenGLShader::ReadFile(const std::string& filepath)
 	{
 		std::string result;
-		std::ifstream in(filepath, std::ios::in, std::ios::binary);
+		std::ifstream in(filepath, std::ios::in | std::ios::binary);
 		if (in)
 		{
 			in.seekg(0, std::ios::end);
@@ -70,22 +76,25 @@ namespace ShawEngine {
 		{
 			size_t eol = source.find_first_of("\r\n", pos);
 			SE_CORE_ASSERT(eol != std::string::npos, "Syntax error");
+			//Shader正式部分
 			size_t begin = pos + typeTokenLength + 1;
 			std::string type = source.substr(begin, eol - begin);
 			SE_CORE_ASSERT(ShaderTypeFromString(type), "Invalid shader type specified");
-
 			size_t nextLinePos = source.find_first_not_of("\r\n", eol);
+			SE_CORE_ASSERT(nextLinePos != std::string::npos, "Syntax error");
+			//找到下一段Shder开始的位置，找不到的话返回npos(-1)
 			pos = source.find(typeToken, nextLinePos);
 			shaderSources[ShaderTypeFromString(type)] = source.substr(nextLinePos, pos - (nextLinePos == std::string::npos ? source.size() - 1 : nextLinePos));
 		}
-
 		return shaderSources;
 	}
 
 	void OpenGLShader::Compile(const std::unordered_map<GLenum, std::string>& shaderSources)
 	{
 		GLuint program = glCreateProgram();
-		std::vector<GLenum> glShaderIDs(shaderSources.size());
+		SE_CORE_ASSERT(shaderSources.size() <= 2, "We only support 2 shaders for now");
+		std::array<GLenum, 2> glShaderIDs;
+		int glShaderIDIndex = 0;
 		for (auto& kv : shaderSources)
 		{
 			GLenum type = kv.first;
@@ -116,7 +125,7 @@ namespace ShawEngine {
 			}
 
 			glAttachShader(program, shader);
-			glShaderIDs.push_back(shader);
+			glShaderIDs[glShaderIDIndex++] = shader;
 		}
 
 		m_RendererID = program;
@@ -146,7 +155,10 @@ namespace ShawEngine {
 		}
 
 		for (auto id : glShaderIDs)
+		{
 			glDetachShader(program, id);
+			glDeleteShader(id);
+		}
 	}
 
 	void OpenGLShader::Bind() const

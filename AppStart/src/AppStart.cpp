@@ -1,15 +1,18 @@
 #include <Engine.h>
+#include <Engine/Core/EntryPoint.h>
 #include "imgui/imgui.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include "Platform/OpenGL/OpenGLShader.h"
+
+#include "AppStart2D.h"
 
 class ExampleLayer :public ShawEngine::Layer {
 public:
 	//用户渲染的层
 	//摄像机
 	//各个VAO -- VertexArray
-	ExampleLayer() :Layer("Example"), m_Camera(-1.6f, 1.6f, -0.9f, 0.9f), m_CameraPosition(0.0f) {
+	ExampleLayer() :Layer("Example"), m_CameraController(1280.0f / 720.0f) {
 
 #pragma region 三角形VAO
 		//顶点数据
@@ -23,13 +26,13 @@ public:
 
 		//创建一个VAO
 		//VertexArray的成员有 m_RendererID(VAO)、m_VertexBuffers、m_IndexBuffer
-		m_VertexArray.reset(ShawEngine::VertexArray::Create());
+		m_VertexArray = ShawEngine::VertexArray::Create();
 
 		//创建一个VBO
 		//VertexBuffer的成员有 m_RendererID(VBO)、m_Layout
 		ShawEngine::Ref<ShawEngine::VertexBuffer> vertexBuffer;
 		//将原始顶点数据vertices送入VBO
-		vertexBuffer.reset(ShawEngine::VertexBuffer::Create(vertices, sizeof(vertices)));
+		vertexBuffer = ShawEngine::VertexBuffer::Create(vertices, sizeof(vertices));
 		//设置好布局，方便设置VBO的顶点属性
 		ShawEngine::BufferLayout layout = {
 			{ ShawEngine::ShaderDataType::Float3, "a_Position" },
@@ -44,7 +47,7 @@ public:
 		//IndexBuffer的成员有 m_RendererID(EBO)、m_Count
 		ShawEngine::Ref<ShawEngine::IndexBuffer> indexBuffer;
 		//将原始索引数据indices送入EBO
-		indexBuffer.reset(ShawEngine::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
+		indexBuffer = ShawEngine::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t));
 		//VAO绑定EBO
 		m_VertexArray->SetIndexBuffer(indexBuffer);
 #pragma endregion
@@ -61,16 +64,16 @@ public:
 		uint32_t squareIndices[6] = { 0, 1, 2, 2, 3, 0 };
 
 		//创建第二个VAO、VBO、EBO等
-		m_SquareVA.reset(ShawEngine::VertexArray::Create());
+		m_SquareVA = ShawEngine::VertexArray::Create();
 		ShawEngine::Ref<ShawEngine::VertexBuffer> squareVB;
-		squareVB.reset(ShawEngine::VertexBuffer::Create(squareVertices, sizeof(squareVertices)));
+		squareVB = ShawEngine::VertexBuffer::Create(squareVertices, sizeof(squareVertices));
 		squareVB->SetLayout({
 			{ ShawEngine::ShaderDataType::Float3, "a_Position" },
 			{ ShawEngine::ShaderDataType::Float2, "a_TexCoord" }
 			});
 		m_SquareVA->AddVertexBuffer(squareVB);
 		ShawEngine::Ref<ShawEngine::IndexBuffer> squareIB;
-		squareIB.reset(ShawEngine::IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint32_t)));
+		squareIB = ShawEngine::IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint32_t));
 		m_SquareVA->SetIndexBuffer(squareIB);
 #pragma endregion 
 
@@ -107,7 +110,7 @@ public:
 		)";
 #pragma endregion
 		//设置Shader
-		m_Shader.reset(ShawEngine::Shader::Create(vertexSrc, fragmentSrc));
+		m_Shader = ShawEngine::Shader::Create("VertexPosColor", vertexSrc, fragmentSrc);
 
 #pragma region ShaderSource2
 		std::string flatColorShaderVertexSrc = R"(
@@ -136,43 +139,29 @@ public:
 		)";
 #pragma endregion
 		//设置Shader
-		m_FlatColorShader.reset(ShawEngine::Shader::Create(flatColorShaderVertexSrc, flatColorShaderFragmentSrc));
+		m_FlatColorShader = ShawEngine::Shader::Create("FlatColor",flatColorShaderVertexSrc, flatColorShaderFragmentSrc);
 	
 		//从文件读取shader
-		m_TextureShader.reset(ShawEngine::Shader::Create("assets/shaders/Texture.glsl"));
+		auto textureShader = m_ShaderLibrary.Load("assets/shaders/Texture.glsl");
 
 		m_Texture = ShawEngine::Texture2D::Create("assets/textures/Checkerboard.png");
-		m_ChernoLogoTexture = ShawEngine::Texture2D::Create("assets/textures/ChernoLogo.png");
+		m_ChernoLogoTexture = ShawEngine::Texture2D::Create("assets/textures/LelouchLogo.png");
 
-		std::dynamic_pointer_cast<ShawEngine::OpenGLShader>(m_TextureShader)->Bind();
-		std::dynamic_pointer_cast<ShawEngine::OpenGLShader>(m_TextureShader)->UploadUniformInt("u_Texture", 0);
+		std::dynamic_pointer_cast<ShawEngine::OpenGLShader>(textureShader)->Bind();
+		std::dynamic_pointer_cast<ShawEngine::OpenGLShader>(textureShader)->UploadUniformInt("u_Texture", 0);
 
 	}
 
 	//更新函数
 	void OnUpdate(ShawEngine::Timestep ts) override {
-		//控制相机的位置
-		if (ShawEngine::Input::IsKeyPressed(SE_KEY_LEFT))
-			m_CameraPosition.x -= m_CameraMoveSpeed * ts;
-		else if (ShawEngine::Input::IsKeyPressed(SE_KEY_RIGHT))
-			m_CameraPosition.x += m_CameraMoveSpeed * ts;
-		if (ShawEngine::Input::IsKeyPressed(SE_KEY_UP))
-			m_CameraPosition.y += m_CameraMoveSpeed * ts;
-		else if (ShawEngine::Input::IsKeyPressed(SE_KEY_DOWN))
-			m_CameraPosition.y -= m_CameraMoveSpeed * ts;
-		//控制相机的旋转
-		if (ShawEngine::Input::IsKeyPressed(SE_KEY_A))
-			m_CameraRotation += m_CameraRotationSpeed * ts;
-		if (ShawEngine::Input::IsKeyPressed(SE_KEY_D))
-			m_CameraRotation -= m_CameraRotationSpeed * ts;
+		m_CameraController.OnUpdate(ts);
+		
 		//清屏
-		ShawEngine::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
+		ShawEngine::RenderCommand::SetClearColor({ 0.2f, 0.4f, 0.4f, 1 });
 		ShawEngine::RenderCommand::Clear();
-		//更新相机位置、旋转
-		m_Camera.SetPosition(m_CameraPosition);
-		m_Camera.SetRotation(m_CameraRotation);
+		
 		//开始渲染场景
-		ShawEngine::Renderer::BeginScene(m_Camera);
+		ShawEngine::Renderer::BeginScene(m_CameraController.GetCamera());
 		//渲染20*20个方形
 		//缩放0.1
 		glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
@@ -192,10 +181,13 @@ public:
 		}
 		//渲染三角形
 		//ShawEngine::Renderer::Submit(m_Shader, m_VertexArray);
+		auto textureShader = m_ShaderLibrary.Get("Texture");
+		//背景
 		m_Texture->Bind();
-		ShawEngine::Renderer::Submit(m_TextureShader, m_SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
+		ShawEngine::Renderer::Submit(textureShader, m_SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
+		//logo
 		m_ChernoLogoTexture->Bind();
-		ShawEngine::Renderer::Submit(m_TextureShader, m_SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
+		ShawEngine::Renderer::Submit(textureShader, m_SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
 
 		//渲染完毕
 		ShawEngine::Renderer::EndScene();
@@ -208,26 +200,27 @@ public:
 		ImGui::End();
 	}
 
-	void OnEvent(ShawEngine::Event& event) override {
-
+	void OnEvent(ShawEngine::Event& e) override {
+		m_CameraController.OnEvent(e);
 	}
 
 	private:
+
+		ShawEngine::ShaderLibrary m_ShaderLibrary;
+
 		//三角形的Shader和VAO
 		ShawEngine::Ref<ShawEngine::Shader> m_Shader;
 		ShawEngine::Ref<ShawEngine::VertexArray> m_VertexArray;
 
 		//方形的Shader和VAO
-		ShawEngine::Ref<ShawEngine::Shader> m_FlatColorShader, m_TextureShader;
+		ShawEngine::Ref<ShawEngine::Shader> m_FlatColorShader;
 		ShawEngine::Ref<ShawEngine::VertexArray> m_SquareVA;
 
-		//摄像机
+		//贴图
 		ShawEngine::Ref<ShawEngine::Texture2D> m_Texture, m_ChernoLogoTexture;
-		ShawEngine::OrthographicCamera m_Camera;
-		glm::vec3 m_CameraPosition;
-		float m_CameraMoveSpeed = 5.0f;
-		float m_CameraRotation = 0.0f;
-		float m_CameraRotationSpeed = 180.0f;
+		
+		//摄像机
+		ShawEngine::OrthographicCameraController m_CameraController;
 
 		glm::vec3 m_SquareColor = { 0.2f, 0.3f, 0.8f };
 };
@@ -236,7 +229,8 @@ public:
 class AppStart :public ShawEngine::Application {
 public:
 	AppStart() {
-		PushLayer(new ExampleLayer());
+		//PushLayer(new ExampleLayer());
+		PushLayer(new AppStart2D());
 	}
 
 	~AppStart() {

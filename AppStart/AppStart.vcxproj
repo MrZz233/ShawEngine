@@ -136,11 +136,18 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\AppStart.cpp" />
+    <ClCompile Include="src\AppStart2D.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ShawEngine\ShawEngine.vcxproj">
       <Project>{6E7FE1CD-5A37-231B-C33E-FC76AF15BE0B}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="assets\shaders\FlatColor.glsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\AppStart2D.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

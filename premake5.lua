@@ -73,7 +73,6 @@ project "ShawEngine"
 		systemversion "latest"
 
 		defines{
-			"SE_PLATFORM_WINDOWS",
 			"SE_BUILD_DLL",
 			"GLFW_INCLUDE_NONE"
 		}
@@ -125,10 +124,6 @@ project "AppStart"
 
 	filter "system:windows"
 		systemversion "latest"
-
-		defines{
-			"SE_PLATFORM_WINDOWS",
-		}
 
 	filter "configurations:Debug"
 		defines "SE_DEBUG"

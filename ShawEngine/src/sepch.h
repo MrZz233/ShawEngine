@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <memory>
+#include <array>
 #include <utility>
 #include <algorithm>
 #include <functional>
@@ -10,7 +11,7 @@
 #include <vector>
 #include <unordered_map>
 #include <unordered_set>
-#include "Engine/Log.h"
+#include "Engine/Core/Log.h"
 
 #ifdef SE_PLATFORM_WINDOWS
 	#include <windows.h>

@@ -1,6 +1,6 @@
 #include "sepch.h"
 #include "WindowsWindow.h"
-#include "Engine/Log.h"
+#include "Engine/Core/Log.h"
 #include "Engine/Events/Event_Application.h"
 #include "Engine/Events/Event_Key.h"
 #include "Engine/Events/Event_Mouse.h"
@@ -8,7 +8,7 @@
 
 namespace ShawEngine {
 	
-	static bool s_GLFWInitialized = false;
+	static uint8_t s_GLFWWindowCount = 0;
 
 	static void GLFWErrorCallback(int error, const char* desc) {
 		SE_CORE_ERROR("GLFW Error:{0} :{1}", error, desc);
@@ -38,20 +38,20 @@ namespace ShawEngine {
 
 		SE_CORE_INFO("Creating window {0} ({1}, {2})", props.Title, props.Width, props.Height);
 
-		if (!s_GLFWInitialized)
+		if (s_GLFWWindowCount == 0)
 		{
 			//初始化glfw
+			SE_CORE_INFO("Initializing GLFW");
 			int success = glfwInit();
 			SE_CORE_ASSERT(success, "Could not intialize GLFW!");
 			glfwSetErrorCallback(GLFWErrorCallback);
-			s_GLFWInitialized = true;
 		}
 
 		//创建glfw窗口
 		m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
-		glfwMakeContextCurrent(m_Window);
+		++s_GLFWWindowCount;
 
-		m_Context = new OpenGLContext(m_Window);
+		m_Context = CreateScope<OpenGLContext>(m_Window);
 		m_Context->Init();
 
 		//Set将用户数据m_Data和m_Window相关联
@@ -141,7 +141,10 @@ namespace ShawEngine {
 
 	void WindowsWindow::Shutdown()
 	{
-		glfwDestroyWindow(m_Window);
+		if (--s_GLFWWindowCount == 0) {
+			SE_CORE_INFO("Terminating GLFW");
+			glfwTerminate();
+		}
 	}
 
 	void WindowsWindow::OnUpdate()

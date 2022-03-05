@@ -1,5 +1,5 @@
 #pragma once
-#include "Engine/Window.h"
+#include "Engine/Core/Window.h"
 #include "Engine/Renderer/GraphicsContext.h"
 #include "GLFW/glfw3.h"
 
@@ -28,7 +28,7 @@ namespace ShawEngine {
 		virtual void Shutdown();
 	private:
 		GLFWwindow* m_Window;
-		GraphicsContext* m_Context;
+		Scope<GraphicsContext> m_Context;
 
 		struct WindowData
 		{

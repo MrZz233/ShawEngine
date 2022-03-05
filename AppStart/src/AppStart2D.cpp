@@ -4,8 +4,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "Platform/OpenGL/OpenGLShader.h"
-
 AppStart2D::AppStart2D()
 	: Layer("Appstart2D"), m_CameraController(1280.0f / 720.0f)
 {
@@ -13,7 +11,7 @@ AppStart2D::AppStart2D()
 
 void AppStart2D::OnAttach()
 {
-
+	m_CheckerboardTexture = ShawEngine::Texture2D::Create("assets/textures/LelouchLogo.png");
 }
 
 void AppStart2D::OnDetach()
@@ -34,17 +32,20 @@ void AppStart2D::OnUpdate(ShawEngine::Timestep ts)
 	//std::dynamic_pointer_cast<ShawEngine::OpenGLShader>(m_FlatColorShader)->Bind();
 	//std::dynamic_pointer_cast<ShawEngine::OpenGLShader>(m_FlatColorShader)->UploadUniformFloat4("u_Color", m_SquareColor);
 
-	ShawEngine::Renderer2D::DrawQuad({ 0.0f, 0.0f }, { 1.0f, 1.0f }, m_SquareColor);
+	ShawEngine::Renderer2D::DrawQuad({ -0.85f* (1280.0f / 720.0f), 0.85f }, { 0.2f, 0.2f }, m_SquareColor1);
+	ShawEngine::Renderer2D::DrawQuad({ -0.65f* (1280.0f / 720.0f), 0.85f }, { 0.2f, 0.2f }, m_SquareColor2);
+	//开启了深度测试，背景的深度设置为-1
+	ShawEngine::Renderer2D::DrawQuad({ 0.0f, 0.0f, -1.0f }, { 10.0f, 10.0f }, m_CheckerboardTexture);
+	
 	ShawEngine::Renderer2D::EndScene();
-
-	// TODO: Add these functions - Shader::SetMat4, Shader::SetFloat4
-
 }
 
 void AppStart2D::OnImGuiRender()
 {
-	ImGui::Begin("Settings_1");
-	ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));
+	ImGui::Begin("Settings");
+	ImGui::ColorEdit4("Square Color_1", glm::value_ptr(m_SquareColor1));
+	ImGui::ColorEdit4("Square Color_2", glm::value_ptr(m_SquareColor2));
+
 	ImGui::End();
 }
 

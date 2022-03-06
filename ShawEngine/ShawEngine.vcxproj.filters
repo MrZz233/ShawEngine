@@ -1518,5 +1518,7 @@
     </ClCompile>
     <ClCompile Include="src\Engine\Renderer\Renderer2D.cpp" />
     <ClCompile Include="src\Engine\Renderer\GraphicsContext.cpp" />
+    <ClCompile Include="src\Engine\Core\Input.cpp" />
+    <ClCompile Include="src\Engine\Core\Window.cpp" />
   </ItemGroup>
 </Project>

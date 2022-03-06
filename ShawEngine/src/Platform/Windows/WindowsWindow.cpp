@@ -5,6 +5,7 @@
 #include "Engine/Events/Event_Key.h"
 #include "Engine/Events/Event_Mouse.h"
 #include "Platform/OpenGL/OpenGLContext.h"
+#include "Engine/Renderer/Renderer.h"
 
 namespace ShawEngine {
 	
@@ -12,12 +13,6 @@ namespace ShawEngine {
 
 	static void GLFWErrorCallback(int error, const char* desc) {
 		SE_CORE_ERROR("GLFW Error:{0} :{1}", error, desc);
-	}
-
-	//默认props为WindowProps()，存储了title，width，height
-	Scope<Window> Window::Create(const WindowProps& props)
-	{
-		return CreateScope<WindowsWindow>(props);
 	}
 
 	WindowsWindow::WindowsWindow(const WindowProps& props)
@@ -53,6 +48,11 @@ namespace ShawEngine {
 		{
 			SE_PROFILE_SCOPE("glfwCreateWindow");
 			//创建glfw窗口
+#if defined(SE_DEBUG)
+			if (Renderer::GetAPI() == RendererAPI::API::OpenGL)
+				glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
+#endif
+
 			m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
 			++s_GLFWWindowCount;
 		}

@@ -37,10 +37,13 @@ void AppStart2D::OnUpdate(ShawEngine::Timestep ts)
 	{
 		SE_PROFILE_SCOPE("Renderer Draw");
 		ShawEngine::Renderer2D::BeginScene(m_CameraController.GetCamera());
-		ShawEngine::Renderer2D::DrawQuad({ -0.85f * (1280.0f / 720.0f), 0.85f }, { 0.2f, 0.2f }, m_SquareColor1);
-		ShawEngine::Renderer2D::DrawQuad({ -0.65f * (1280.0f / 720.0f), 0.85f }, { 0.2f, 0.2f }, m_SquareColor2);
+		ShawEngine::Renderer2D::DrawQuad({ -1.0f, 0.0f }, { 0.8f, 0.8f }, m_SquareColor1);
+		ShawEngine::Renderer2D::DrawQuad({ 0.5f, -0.5f }, { 0.5f, 0.75f }, m_SquareColor2);
+		
 		//开启了深度测试，背景的深度设置为-0.1
-		ShawEngine::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f }, { 10.0f, 10.0f }, m_CheckerboardTexture);
+		//ShawEngine::Renderer2D::DrawRotatedQuad({ 0.0f, 0.0f, -0.1f }, { 10.0f, 10.0f }, 0.0f, m_CheckerboardTexture,10.0f);
+		//ShawEngine::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f }, { 10.0f, 10.0f }, m_CheckerboardTexture, 10.0f);
+
 		ShawEngine::Renderer2D::EndScene();
 	}
 	++fps_count;

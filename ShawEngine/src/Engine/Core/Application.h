@@ -9,6 +9,8 @@
 
 #include "Engine/ImGui/ImGuiLayer.h"
 
+int main(int argc, char** argv);
+
 namespace ShawEngine {
 	class Application
 	{
@@ -16,7 +18,6 @@ namespace ShawEngine {
 		Application();
 		virtual ~Application();
 
-		void Run();	
 		void OnEvent(Event&);
 
 		void PushLayer(Layer* layer);
@@ -27,6 +28,7 @@ namespace ShawEngine {
 		inline static Application& Get() { return *s_Instance; }
 		bool OnWindowClose(WindowCloseEvent& e);
 	private:
+		void Run();
 		bool OnClosed(WindowCloseEvent&);
 		bool OnWindowResize(WindowResizeEvent& e);
 		std::unique_ptr<Window> m_Windows;
@@ -37,6 +39,7 @@ namespace ShawEngine {
 		float m_LastFrameTime = 0.0f;
 
 		static Application* s_Instance;
+		friend int ::main(int argc, char** argv);
 	};
 
 	//用户定义

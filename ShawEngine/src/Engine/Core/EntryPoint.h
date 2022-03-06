@@ -16,7 +16,7 @@
 		app->Run();		//app指向的是AppStart类型的指针
 		SE_PROFILE_END_SESSION();
 
-		SE_PROFILE_BEGIN_SESSION("Shutdown", "HazelProfile-Shutdown.json");
+		SE_PROFILE_BEGIN_SESSION("Shutdown", "ShawEngineProfile-Shutdown.json");
 		delete app;
 		SE_PROFILE_END_SESSION();
 	}

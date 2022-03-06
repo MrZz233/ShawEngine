@@ -22,6 +22,10 @@ private:
 	ShawEngine::Ref<ShawEngine::Shader> m_FlatColorShader;
 	ShawEngine::Ref<ShawEngine::Texture2D> m_CheckerboardTexture;
 
+	uint32_t fps_count = 0;
+	uint32_t fps = 0;
+	std::chrono::time_point<std::chrono::steady_clock> time_last;
+	std::chrono::time_point<std::chrono::steady_clock> time_new;
 	glm::vec4 m_SquareColor1 = { 0.2f, 0.3f, 0.8f, 1.0f };
 	glm::vec4 m_SquareColor2 = { 0.8f, 0.3f, 0.2f, 1.0f };
 

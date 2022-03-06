@@ -1,7 +1,6 @@
 #include "sepch.h"
-#include "Shader.h"
-
-#include "Renderer.h"
+#include "Engine/Renderer/Shader.h"
+#include "Engine/Renderer/Renderer.h"
 #include "Platform/OpenGL/OpenGLShader.h"
 
 namespace ShawEngine {
@@ -10,8 +9,11 @@ namespace ShawEngine {
 	{
 		switch (Renderer::GetAPI())
 		{
-		case RendererAPI::API::None:    SE_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
-		case RendererAPI::API::OpenGL: return std::make_shared<OpenGLShader>(filepath);
+		case RendererAPI::API::None:    
+			SE_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); 
+			return nullptr;
+		case RendererAPI::API::OpenGL: 
+			return CreateRef<OpenGLShader>(filepath);
 		}
 
 		SE_CORE_ASSERT(false, "Unknown RendererAPI!");
@@ -23,8 +25,11 @@ namespace ShawEngine {
 	{
 		switch (Renderer::GetAPI())
 		{
-		case RendererAPI::API::None:    SE_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
-		case RendererAPI::API::OpenGL:  return std::make_shared<OpenGLShader>(name,vertexSrc, fragmentSrc);
+		case RendererAPI::API::None:    
+			SE_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); 
+			return nullptr;
+		case RendererAPI::API::OpenGL: 
+			return CreateRef<OpenGLShader>(name, vertexSrc, fragmentSrc);
 		}
 
 		SE_CORE_ASSERT(false, "Unknown RendererAPI!");

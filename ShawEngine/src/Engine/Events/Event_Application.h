@@ -1,12 +1,11 @@
 #pragma once
-#include "Event.h"
-#include <sstream>
+#include "Engine/Events/Event.h"
 
 //Window和App相关的类
 namespace ShawEngine {
 	
 	//调整窗口大小事件，继承自Event
-	class SE_API WindowResizeEvent : public Event
+	class WindowResizeEvent : public Event
 	{
 	public:
 		WindowResizeEvent(unsigned int width, unsigned int height)
@@ -31,10 +30,10 @@ namespace ShawEngine {
 	};
 
 	//窗口关闭事件，继承自Event
-	class SE_API WindowCloseEvent : public Event
+	class WindowCloseEvent : public Event
 	{
 	public:
-		WindowCloseEvent() {}
+		WindowCloseEvent() = default;
 
 		//通过宏快速实现事件枚举和分类相关
 		EVENT_CLASS_TYPE(WindowClose)
@@ -42,10 +41,10 @@ namespace ShawEngine {
 	};
 
 	//程序点击事件，继承自Event
-	class SE_API AppTickEvent : public Event
+	class AppTickEvent : public Event
 	{
 	public:
-		AppTickEvent() {}
+		AppTickEvent() = default;
 
 		//通过宏快速实现事件枚举和分类相关
 		EVENT_CLASS_TYPE(AppTick)
@@ -53,10 +52,10 @@ namespace ShawEngine {
 	};
 
 	//程序主循环事件，继承自Event
-	class SE_API AppUpdateEvent : public Event
+	class AppUpdateEvent : public Event
 	{
 	public:
-		AppUpdateEvent() {}
+		AppUpdateEvent() = default;
 
 		//通过宏快速实现事件枚举和分类相关
 		EVENT_CLASS_TYPE(AppUpdate)
@@ -64,10 +63,10 @@ namespace ShawEngine {
 	};
 
 	//程序渲染事件，继承自Event
-	class SE_API AppRenderEvent : public Event
+	class AppRenderEvent : public Event
 	{
 	public:
-		AppRenderEvent() {}
+		AppRenderEvent() = default;
 
 		//通过宏快速实现事件枚举和分类相关
 		EVENT_CLASS_TYPE(AppRender)

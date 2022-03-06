@@ -1,11 +1,12 @@
 #pragma once
-#include "Core.h"
-#include "Window.h"
+#include "Engine/Core/Core.h"
+#include "Engine/Core/Window.h"
+#include "Engine/Core/LayerStack.h"
+#include "Engine/Core/Timestep.h"
+
 #include "Engine/Events/Event.h"
 #include "Engine/Events/Event_Application.h"
-#include "Engine/Core/LayerStack.h"
 
-#include "Engine/Core/Timestep.h"
 #include "Engine/ImGui/ImGuiLayer.h"
 
 namespace ShawEngine {
@@ -13,7 +14,7 @@ namespace ShawEngine {
 	{
 	public:
 		Application();
-		virtual ~Application() = default;
+		virtual ~Application();
 
 		void Run();	
 		void OnEvent(Event&);

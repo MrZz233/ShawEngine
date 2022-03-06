@@ -1,5 +1,5 @@
 #include "sepch.h"
-#include "OrthographicCameraController.h"
+#include "Engine/Renderer/OrthographicCameraController.h"
 
 #include "Engine/Core/Input.h"
 #include "Engine/Core/KeyCodes.h"
@@ -13,6 +13,7 @@ namespace ShawEngine {
 
 	void OrthographicCameraController::OnUpdate(Timestep ts)
 	{
+		SE_PROFILE_FUNCTION();
 		if (Input::IsKeyPressed(SE_KEY_A))
 			m_CameraPosition.x -= m_CameraTranslationSpeed * ts;
 		else if (Input::IsKeyPressed(SE_KEY_D))
@@ -45,6 +46,7 @@ namespace ShawEngine {
 
 	void OrthographicCameraController::OnEvent(Event& e)
 	{
+		SE_PROFILE_FUNCTION();
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<MouseScrolledEvent>(SE_BIND_EVENT_FN(OrthographicCameraController::OnMouseScrolled));
 		dispatcher.Dispatch<WindowResizeEvent>(SE_BIND_EVENT_FN(OrthographicCameraController::OnWindowResized));
@@ -52,6 +54,7 @@ namespace ShawEngine {
 
 	bool OrthographicCameraController::OnMouseScrolled(MouseScrolledEvent& e)
 	{
+		SE_PROFILE_FUNCTION();
 		m_ZoomLevel -= e.GetYOffset() * 0.25f;
 		m_ZoomLevel = std::max(m_ZoomLevel, 0.25f);
 		m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
@@ -60,6 +63,7 @@ namespace ShawEngine {
 
 	bool OrthographicCameraController::OnWindowResized(WindowResizeEvent& e)
 	{
+		SE_PROFILE_FUNCTION();
 		m_AspectRatio = (float)e.GetWidth() / (float)e.GetHeight();
 		m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
 		return false;

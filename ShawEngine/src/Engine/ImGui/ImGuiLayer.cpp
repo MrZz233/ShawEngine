@@ -1,9 +1,9 @@
 #include "sepch.h"
-#include "ImGuiLayer.h"
+#include "Engine/ImGui/ImGuiLayer.h"
 
-#include "imgui.h"
-#include "examples/imgui_impl_glfw.h"
-#include "examples/imgui_impl_opengl3.h"
+#include <imgui.h>
+#include <examples/imgui_impl_glfw.h>
+#include <examples/imgui_impl_opengl3.h>
 
 #include "Engine/Core/Application.h"
 
@@ -21,6 +21,7 @@ namespace ShawEngine {
 	void ImGuiLayer::OnAttach()
 	{
 		// Setup Dear ImGui context
+		SE_PROFILE_FUNCTION();
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
 		ImGuiIO& io = ImGui::GetIO(); (void)io;
@@ -53,6 +54,7 @@ namespace ShawEngine {
 
 	void ImGuiLayer::OnDetach()
 	{
+		SE_PROFILE_FUNCTION();
 		ImGui_ImplOpenGL3_Shutdown();
 		ImGui_ImplGlfw_Shutdown();
 		ImGui::DestroyContext();
@@ -60,6 +62,7 @@ namespace ShawEngine {
 
 	void ImGuiLayer::Begin()
 	{
+		SE_PROFILE_FUNCTION();
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
@@ -67,6 +70,7 @@ namespace ShawEngine {
 
 	void ImGuiLayer::End()
 	{
+		SE_PROFILE_FUNCTION();
 		ImGuiIO& io = ImGui::GetIO();
 		Application& app = Application::Get();
 		io.DisplaySize = ImVec2((float)app.GetWindow().GetWidth(), (float)app.GetWindow().GetHeight());
@@ -82,12 +86,6 @@ namespace ShawEngine {
 			ImGui::RenderPlatformWindowsDefault();
 			glfwMakeContextCurrent(backup_current_context);
 		}
-	}
-
-	void ImGuiLayer::OnImGuiRender()
-	{
-		static bool show = true;
-		ImGui::ShowDemoWindow(&show);
 	}
 
 }

@@ -1,11 +1,7 @@
 #include "sepch.h"
-#include "LayerStack.h"
+#include "Engine/Core/LayerStack.h"
 
 namespace ShawEngine {
-
-	LayerStack::LayerStack()
-	{
-	}
 
 	LayerStack::~LayerStack()
 	{

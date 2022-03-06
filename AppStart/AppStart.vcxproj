@@ -137,6 +137,7 @@
   <ItemGroup>
     <ClCompile Include="src\AppStart.cpp" />
     <ClCompile Include="src\AppStart2D.cpp" />
+    <ClCompile Include="src\ExampleLayer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ShawEngine\ShawEngine.vcxproj">
@@ -148,6 +149,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\AppStart2D.h" />
+    <ClInclude Include="src\ExampleLayer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -5,14 +5,13 @@
 #include "Engine/Events/Event_Application.h"
 
 namespace ShawEngine {
-	class SE_API ImGuiLayer :public Layer {
+	class ImGuiLayer :public Layer {
 	public:
 		ImGuiLayer();
 		~ImGuiLayer() = default;
 
 		virtual void OnAttach() override;
 		virtual void OnDetach() override;
-		virtual void OnImGuiRender() override;
 
 		void Begin();
 		void End();

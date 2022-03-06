@@ -1,11 +1,10 @@
 #pragma once
-#include "Event.h"
-#include <sstream>
+#include "Engine/Events/Event.h"
 
 namespace ShawEngine {
 
 	//键盘事件 继承自Event
-	class SE_API KeyEvent : public Event
+	class KeyEvent : public Event
 	{
 	public:
 		//获取按键码
@@ -22,7 +21,7 @@ namespace ShawEngine {
 	};
 
 	//按键事件 继承自键盘事件
-	class SE_API KeyPressedEvent : public KeyEvent
+	class KeyPressedEvent : public KeyEvent
 	{
 	public:
 		KeyPressedEvent(int keycode, int repeatCount)
@@ -46,7 +45,7 @@ namespace ShawEngine {
 	};
 
 	//释放键事件 继承自键盘事件
-	class SE_API KeyReleasedEvent : public KeyEvent
+	class KeyReleasedEvent : public KeyEvent
 	{
 	public:
 		KeyReleasedEvent(int keycode)
@@ -64,7 +63,7 @@ namespace ShawEngine {
 		EVENT_CLASS_TYPE(KeyReleased)
 	};
 
-	class SE_API KeyTypedEvent : public KeyEvent
+	class KeyTypedEvent : public KeyEvent
 	{
 	public:
 		KeyTypedEvent(int keycode)

@@ -1,7 +1,8 @@
 #pragma once
 
-#include "Texture.h"
-#include "OrthographicCamera.h"
+#include "Engine/Renderer/OrthographicCamera.h"
+
+#include "Engine/Renderer/Texture.h"
 
 namespace ShawEngine {
 

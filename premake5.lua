@@ -1,5 +1,5 @@
 workspace "ShawEngine"
-	architecture "x64"
+	architecture "x86_64"
 	startproject "AppStart"
 	configurations{
 		"Debug",

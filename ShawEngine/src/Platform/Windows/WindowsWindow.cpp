@@ -1,5 +1,5 @@
 #include "sepch.h"
-#include "WindowsWindow.h"
+#include "Platform/Windows/WindowsWindow.h"
 #include "Engine/Core/Log.h"
 #include "Engine/Events/Event_Application.h"
 #include "Engine/Events/Event_Key.h"
@@ -15,23 +15,26 @@ namespace ShawEngine {
 	}
 
 	//默认props为WindowProps()，存储了title，width，height
-	Window* Window::Create(const WindowProps& props)
+	Scope<Window> Window::Create(const WindowProps& props)
 	{
-		return new WindowsWindow(props);
+		return CreateScope<WindowsWindow>(props);
 	}
 
 	WindowsWindow::WindowsWindow(const WindowProps& props)
 	{
+		SE_PROFILE_FUNCTION();
 		Init(props);
 	}
 
 	WindowsWindow::~WindowsWindow()
 	{
+		SE_PROFILE_FUNCTION();
 		Shutdown();
 	}
 
 	void WindowsWindow::Init(const WindowProps& props)
 	{
+		SE_PROFILE_FUNCTION();
 		m_Data.Title = props.Title;
 		m_Data.Width = props.Width;
 		m_Data.Height = props.Height;
@@ -40,23 +43,26 @@ namespace ShawEngine {
 
 		if (s_GLFWWindowCount == 0)
 		{
+			SE_PROFILE_SCOPE("glfwInit");
 			//初始化glfw
 			SE_CORE_INFO("Initializing GLFW");
 			int success = glfwInit();
 			SE_CORE_ASSERT(success, "Could not intialize GLFW!");
 			glfwSetErrorCallback(GLFWErrorCallback);
 		}
-
-		//创建glfw窗口
-		m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
-		++s_GLFWWindowCount;
-
-		m_Context = CreateScope<OpenGLContext>(m_Window);
+		{
+			SE_PROFILE_SCOPE("glfwCreateWindow");
+			//创建glfw窗口
+			m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
+			++s_GLFWWindowCount;
+		}
+		
+		m_Context = GraphicsContext::Create(m_Window);
 		m_Context->Init();
 
 		//Set将用户数据m_Data和m_Window相关联
 		glfwSetWindowUserPointer(m_Window, &m_Data);
-		SetVSync(true);
+		SetVSync(false);
 		//设置glfw回调
 		//调整窗口大小
 		glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height) {
@@ -141,7 +147,9 @@ namespace ShawEngine {
 
 	void WindowsWindow::Shutdown()
 	{
-		if (--s_GLFWWindowCount == 0) {
+		SE_PROFILE_FUNCTION();
+		--s_GLFWWindowCount;
+		if (s_GLFWWindowCount == 0){
 			SE_CORE_INFO("Terminating GLFW");
 			glfwTerminate();
 		}
@@ -149,12 +157,14 @@ namespace ShawEngine {
 
 	void WindowsWindow::OnUpdate()
 	{
+		SE_PROFILE_FUNCTION();
 		glfwPollEvents();
 		m_Context->SwapBuffers();
 	}
 
 	void WindowsWindow::SetVSync(bool enabled)
 	{
+		SE_PROFILE_FUNCTION();
 		if (enabled)
 			glfwSwapInterval(1);
 		else

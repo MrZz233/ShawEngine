@@ -22,7 +22,7 @@ namespace ShawEngine {
 	};
 
 	//窗口基类
-	class SE_API Window
+	class Window
 	{
 	public:
 		//回调
@@ -43,7 +43,7 @@ namespace ShawEngine {
 		virtual void* GetNativeWindow() const = 0;
 
 		//函数声明，不同的平台需要实现各自的Create()，目前有Windows
-		static Window* Create(const WindowProps& props = WindowProps());
+		static Scope<Window> Create(const WindowProps& props = WindowProps());
 	};
 
 }

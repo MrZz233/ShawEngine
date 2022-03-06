@@ -4,7 +4,7 @@
 
 namespace ShawEngine {
 
-	class SE_API Input
+	class Input
 	{
 	
 	public:

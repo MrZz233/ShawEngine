@@ -1,7 +1,6 @@
 #pragma once
+#include "sepch.h"
 #include "Engine/Core/Core.h"
-#include <string>
-#include <functional>
 
 namespace ShawEngine {
 
@@ -41,7 +40,7 @@ namespace ShawEngine {
 	#define EVENT_CLASS_CATEGORY(category) virtual int GetCategoryFlags() const override { return category; }
 	
 	//Event抽象类
-	class SE_API Event
+	class Event
 	{
 		//EventDispatcher事件调度类
 		friend class EventDispatcher;

@@ -1,5 +1,5 @@
 #include "sepch.h"
-#include "OpenGLContext.h"
+#include "Platform/OpenGL/OpenGLContext.h"
 
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
@@ -15,6 +15,7 @@ namespace ShawEngine {
 
 	void OpenGLContext::Init()
 	{
+		SE_PROFILE_FUNCTION();
 		glfwMakeContextCurrent(m_WindowHandle);
 		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 		SE_CORE_ASSERT(status, "Failed to initialize Glad!");
@@ -36,6 +37,7 @@ namespace ShawEngine {
 
 	void OpenGLContext::SwapBuffers()
 	{
+		SE_PROFILE_FUNCTION();
 		glfwSwapBuffers(m_WindowHandle);
 	}
 

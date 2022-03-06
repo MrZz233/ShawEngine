@@ -43,22 +43,6 @@
 #error "Unknown platform!"
 #endif // End of platform detection
 
-
-// DLL support
-#ifdef SE_PLATFORM_WINDOWS
-#if SE_DYNAMIC_LINK
-#ifdef SE_BUILD_DLL
-#define SE_API __declspec(dllexport)
-#else
-#define SE_API __declspec(dllimport)
-#endif
-#else
-#define SE_API
-#endif
-#else
-#error Hazel only supports Windows!
-#endif // End of DLL support
-
 #ifdef SE_DEBUG
 	#define SE_ENABLE_ASSERTS
 #endif

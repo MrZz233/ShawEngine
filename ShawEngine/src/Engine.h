@@ -2,6 +2,7 @@
 //供AppStart使用
 #include "Engine/Core/Application.h"
 //提供日志系统
+#include "Engine/Core/Core.h"
 #include "Engine/Core/Log.h"
 #include "Engine/Core/Layer.h"
 #include "Engine/Core/Timestep.h"

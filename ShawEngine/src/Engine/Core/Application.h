@@ -25,6 +25,7 @@ namespace ShawEngine {
 
 		Window& GetWindow() { return *m_Windows; }
 		void Close();
+		ImGuiLayer* GetImGuiLayer() { return m_ImGuiLayer; }
 		static Application& Get() { return *s_Instance; }
 		bool OnWindowClose(WindowCloseEvent& e);
 	private:

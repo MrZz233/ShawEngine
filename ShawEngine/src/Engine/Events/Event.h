@@ -47,6 +47,7 @@ namespace ShawEngine {
 
 	public:
 		//返回事件枚举及类型 接口
+		virtual ~Event() = default;
 		virtual EventType GetEventType() const = 0;
 		virtual const char* GetName() const = 0;
 		//返回事件分类 接口

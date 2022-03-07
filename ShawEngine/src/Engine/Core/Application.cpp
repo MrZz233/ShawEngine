@@ -9,12 +9,12 @@ namespace ShawEngine {
 
 	Application* Application::s_Instance = nullptr;
 
-	Application::Application(){
+	Application::Application(const std::string& name){
 		SE_PROFILE_FUNCTION();
 		SE_CORE_ASSERT(!s_Instance, "Application already exists!");
 		s_Instance = this;
 
-		m_Windows = Window::Create();
+		m_Windows = Window::Create(WindowProps(name));
 		m_Windows->SetEventCallback(SE_BIND_EVENT_FN(Application::OnEvent));
 
 		Renderer::Init();
@@ -54,6 +54,11 @@ namespace ShawEngine {
 	bool Application::OnClosed(WindowCloseEvent& e) {
 		m_Running = false;
 		return true;
+	}
+
+	void Application::Close()
+	{
+		m_Running = false;
 	}
 
 	void Application::Run() {

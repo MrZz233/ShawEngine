@@ -72,13 +72,10 @@ namespace ShawEngine {
 		{
 			std::stringstream json;
 
-			std::string name = result.Name;
-			std::replace(name.begin(), name.end(), '"', '\'');
-
 			json << ",{";
 			json << "\"cat\":\"function\",";
 			json << "\"dur\":" << (result.ElapsedTime.count()) << ',';
-			json << "\"name\":\"" << name << "\",";
+			json << "\"name\":\"" << result.Name << "\",";
 			json << "\"ph\":\"X\",";
 			json << "\"pid\":0,";
 			json << "\"tid\":" << result.ThreadID << ",";
@@ -150,6 +147,35 @@ namespace ShawEngine {
 	};
 }
 
+namespace InstrumentorUtils {
+
+	template <size_t N>
+	struct ChangeResult
+	{
+		char Data[N];
+	};
+
+	template <size_t N, size_t K>
+	constexpr auto CleanupOutputString(const char(&expr)[N], const char(&remove)[K])
+	{
+		ChangeResult<N> result = {};
+
+		size_t srcIndex = 0;
+		size_t dstIndex = 0;
+		while (srcIndex < N)
+		{
+			size_t matchIndex = 0;
+			while (matchIndex < K - 1 && srcIndex + matchIndex < N - 1 && expr[srcIndex + matchIndex] == remove[matchIndex])
+				matchIndex++;
+			if (matchIndex == K - 1)
+				srcIndex += matchIndex;
+			result.Data[dstIndex++] = expr[srcIndex] == '"' ? '\'' : expr[srcIndex];
+			srcIndex++;
+		}
+		return result;
+	}
+}
+
 
 #define SE_PROFILE 0
 #if SE_PROFILE
@@ -160,7 +186,7 @@ namespace ShawEngine {
 #define SE_FUNC_SIG __PRETTY_FUNCTION__
 #elif defined(__DMC__) && (__DMC__ >= 0x810)
 #define SE_FUNC_SIG __PRETTY_FUNCTION__
-#elif defined(__FUNCSIG__)
+#elif (defined(__FUNCSIG__) || (_MSC_VER))
 //实际会编译这里
 #define SE_FUNC_SIG __FUNCSIG__
 #elif (defined(__INTEL_COMPILER) && (__INTEL_COMPILER >= 600)) || (defined(__IBMCPP__) && (__IBMCPP__ >= 500))
@@ -176,7 +202,8 @@ namespace ShawEngine {
 #endif
 #define SE_PROFILE_BEGIN_SESSION(name, filepath) ::ShawEngine::Instrumentor::Get().BeginSession(name, filepath)
 #define SE_PROFILE_END_SESSION() ::ShawEngine::Instrumentor::Get().EndSession()
-#define SE_PROFILE_SCOPE(name) ::ShawEngine::InstrumentationTimer timer##__LINE__(name);
+#define HZ_PROFILE_SCOPE(name) constexpr auto fixedName = ::ShawEngine::InstrumentorUtils::CleanupOutputString(name, "__cdecl ");\
+									::ShawEngine::InstrumentationTimer timer##__LINE__(fixedName.Data)
 #define SE_PROFILE_FUNCTION() SE_PROFILE_SCOPE(SE_FUNC_SIG)
 #else
 #define SE_PROFILE_BEGIN_SESSION(name, filepath)

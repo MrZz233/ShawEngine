@@ -21,6 +21,7 @@ private:
 	ShawEngine::Ref<ShawEngine::VertexArray> m_SquareVA;
 	ShawEngine::Ref<ShawEngine::Shader> m_FlatColorShader;
 	ShawEngine::Ref<ShawEngine::Texture2D> m_CheckerboardTexture;
+	//ShawEngine::Ref<ShawEngine::Framebuffer> m_Framebuffer;
 
 	uint32_t fps_count = 0;
 	uint32_t fps = 0;

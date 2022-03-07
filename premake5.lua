@@ -135,3 +135,50 @@ project "AppStart"
 		defines "SE_DIST"
 		runtime "Release"
 		optimize "on"
+
+project "Shaw-Editor"
+	location "Shaw-Editor"
+	kind "ConsoleApp"
+	language "C++"
+	cppdialect "C++17"
+	staticruntime "on"
+
+	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
+	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+
+	files
+	{
+		"%{prj.name}/src/**.h",
+		"%{prj.name}/src/**.cpp"
+	}
+
+	includedirs
+	{
+		"ShawEngine/vendor/spdlog/include",
+		"ShawEngine/src",
+		"ShawEngine/vendor",
+		"%{IncludeDir.glm}"
+	}
+
+	links
+	{
+		"ShawEngine"
+	}
+
+	filter "system:windows"
+		systemversion "latest"
+
+	filter "configurations:Debug"
+		defines "SE_DEBUG"
+		runtime "Debug"
+		symbols "on"
+
+	filter "configurations:Release"
+		defines "SE_RELEASE"
+		runtime "Release"
+		optimize "on"
+
+	filter "configurations:Dist"
+		defines "SE_DIST"
+		runtime "Release"
+		optimize "on"

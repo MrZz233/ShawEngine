@@ -2,7 +2,7 @@
 //供AppStart使用
 #include "Engine/Core/Application.h"
 //提供日志系统
-#include "Engine/Core/Core.h"
+#include "Engine/Core/Base.h"
 #include "Engine/Core/Log.h"
 #include "Engine/Core/Layer.h"
 #include "Engine/Core/Timestep.h"
@@ -19,6 +19,7 @@
 #include "Engine/Renderer/Renderer2D.h"
 #include "Engine/Renderer/Buffer.h"
 #include "Engine/Renderer/Shader.h"
+#include "Engine/Renderer/Framebuffer.h"
 #include "Engine/Renderer/Texture.h"
 #include "Engine/Renderer/VertexArray.h"
 

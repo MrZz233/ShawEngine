@@ -1,6 +1,6 @@
 #pragma once
 //#include "Application.h"
-#include "Engine/Core/Core.h"
+#include "Engine/Core/Base.h"
 #include "Engine/Core/Log.h"
 
 #ifdef SE_PLATFORM_WINDOWS

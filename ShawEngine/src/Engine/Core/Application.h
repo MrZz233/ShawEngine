@@ -1,5 +1,5 @@
 #pragma once
-#include "Engine/Core/Core.h"
+#include "Engine/Core/Base.h"
 #include "Engine/Core/Window.h"
 #include "Engine/Core/LayerStack.h"
 #include "Engine/Core/Timestep.h"
@@ -15,7 +15,7 @@ namespace ShawEngine {
 	class Application
 	{
 	public:
-		Application();
+		Application(const std::string& name = "ShawEngine App");
 		virtual ~Application();
 
 		void OnEvent(Event&);
@@ -24,7 +24,7 @@ namespace ShawEngine {
 		void PushOverLay(Layer* layer);
 
 		Window& GetWindow() { return *m_Windows; }
-
+		void Close();
 		static Application& Get() { return *s_Instance; }
 		bool OnWindowClose(WindowCloseEvent& e);
 	private:

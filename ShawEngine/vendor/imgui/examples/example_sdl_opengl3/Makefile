@@ -31,22 +31,16 @@ LIBS =
 
 ## Using OpenGL loader: gl3w [default]
 SOURCES += ../libs/gl3w/GL/gl3w.c
-CXXFLAGS += -I../libs/gl3w -DIMGUI_IMPL_OPENGL_LOADER_GL3W
+CXXFLAGS += -I../libs/gl3w
 
 ## Using OpenGL loader: glew
 ## (This assumes a system-wide installation)
-# CXXFLAGS += -lGLEW -DIMGUI_IMPL_OPENGL_LOADER_GLEW
+# CXXFLAGS = -lGLEW -DIMGUI_IMPL_OPENGL_LOADER_GLEW
 
 ## Using OpenGL loader: glad
+## (You'll also need to change the rule at line ~77 of this Makefile to compile/link glad.c/.o)
 # SOURCES += ../libs/glad/src/glad.c
-# CXXFLAGS += -I../libs/glad/include -DIMGUI_IMPL_OPENGL_LOADER_GLAD
-
-## Using OpenGL loader: glbinding
-## This assumes a system-wide installation
-## of either version 3.0.0 (or newer)
-# CXXFLAGS += -lglbinding -DIMGUI_IMPL_OPENGL_LOADER_GLBINDING3
-## or the older version 2.x
-# CXXFLAGS += -lglbinding -DIMGUI_IMPL_OPENGL_LOADER_GLBINDING2
+# CXXFLAGS = -I../libs/glad/include -DIMGUI_IMPL_OPENGL_LOADER_GLAD
 
 ##---------------------------------------------------------------------
 ## BUILD FLAGS PER PLATFORM
@@ -56,7 +50,7 @@ ifeq ($(UNAME_S), Linux) #LINUX
 	ECHO_MESSAGE = "Linux"
 	LIBS += -lGL -ldl `sdl2-config --libs`
 
-	CXXFLAGS += `sdl2-config --cflags`
+	CXXFLAGS += -I../libs/gl3w `sdl2-config --cflags`
 	CFLAGS = $(CXXFLAGS)
 endif
 
@@ -65,7 +59,7 @@ ifeq ($(UNAME_S), Darwin) #APPLE
 	LIBS += -framework OpenGL -framework Cocoa -framework IOKit -framework CoreVideo `sdl2-config --libs`
 	LIBS += -L/usr/local/lib -L/opt/local/lib
 
-	CXXFLAGS += `sdl2-config --cflags`
+	CXXFLAGS += -I../libs/gl3w `sdl2-config --cflags`
 	CXXFLAGS += -I/usr/local/include -I/opt/local/include
 	CFLAGS = $(CXXFLAGS)
 endif
@@ -74,7 +68,7 @@ ifeq ($(findstring MINGW,$(UNAME_S)),MINGW)
    ECHO_MESSAGE = "MinGW"
    LIBS += -lgdi32 -lopengl32 -limm32 `pkg-config --static --libs sdl2`
 
-   CXXFLAGS += `pkg-config --cflags sdl2`
+   CXXFLAGS += -I../libs/gl3w `pkg-config --cflags sdl2`
    CFLAGS = $(CXXFLAGS)
 endif
 
@@ -92,9 +86,6 @@ endif
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
 %.o:../libs/gl3w/GL/%.c
-	$(CC) $(CFLAGS) -c -o $@ $<
-
-%.o:../libs/glad/src/%.c
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 all: $(EXE)

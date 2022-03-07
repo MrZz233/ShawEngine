@@ -1,6 +1,6 @@
 workspace "ShawEngine"
 	architecture "x86_64"
-	startproject "AppStart"
+	startproject "Shaw-Editor"
 	configurations{
 		"Debug",
 		"Release",

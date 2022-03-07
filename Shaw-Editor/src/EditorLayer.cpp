@@ -30,6 +30,9 @@ namespace ShawEngine {
 
 	void EditorLayer::OnUpdate(ShawEngine::Timestep ts)
 	{
+		static auto time_last = std::chrono::high_resolution_clock::now();
+		static auto time_new = std::chrono::high_resolution_clock::now();
+		static uint32_t fps_count = 0;
 		SE_PROFILE_FUNCTION();
 		// Update
 		//if(!ImGui::GetIO().WantCaptureKeyboard)
@@ -67,6 +70,17 @@ namespace ShawEngine {
 			}
 			ShawEngine::Renderer2D::EndScene();
 			m_Framebuffer->Unbind();
+		}
+
+		++fps_count;
+		time_new = std::chrono::high_resolution_clock::now();
+		long long start = std::chrono::time_point_cast<std::chrono::microseconds>(time_last).time_since_epoch().count();
+		long long end = std::chrono::time_point_cast<std::chrono::microseconds>(time_new).time_since_epoch().count();
+		float duration = (end - start) * 0.001f;
+		if (duration > 999) {
+			fps = fps_count;
+			fps_count = 0;
+			time_last = time_new;
 		}
 	}
 
@@ -138,37 +152,33 @@ namespace ShawEngine {
 			}
 
 			ImGui::Begin("Settings");
-
 			auto stats = ShawEngine::Renderer2D::GetStats();
+			ImGui::Text("FPS: %d", fps);
 			ImGui::Text("Renderer2D Stats:");
 			ImGui::Text("Draw Calls: %d", stats.DrawCalls);
 			ImGui::Text("Quads: %d", stats.QuadCount);
 			ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
 			ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
-
 			ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));
+			ImGui::End();
 
+			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
+			ImGui::Begin("Viewport");
+			ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
+			if (m_ViewportSize != *((glm::vec2*) & viewportPanelSize))
+			{
+				//调整渲染图像的大小
+				m_Framebuffer->Resize((uint32_t)viewportPanelSize.x, (uint32_t)viewportPanelSize.y);
+				//根据ImGui窗口大小调整ViewPort
+				m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
+				//根据ViewPort调整相机的视角
+				m_CameraController.OnResize(viewportPanelSize.x, viewportPanelSize.y);
+			}
 			uint32_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
-			ImGui::Image((void*)textureID, ImVec2{ 1280, 720 }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+			ImGui::Image((void*)textureID, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 			ImGui::End();
+			ImGui::PopStyleVar();
 
-			ImGui::End();
-		}
-		else
-		{
-			ImGui::Begin("Settings");
-
-			auto stats = ShawEngine::Renderer2D::GetStats();
-			ImGui::Text("Renderer2D Stats:");
-			ImGui::Text("Draw Calls: %d", stats.DrawCalls);
-			ImGui::Text("Quads: %d", stats.QuadCount);
-			ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
-			ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
-
-			ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));
-
-			uint32_t textureID = m_CheckerboardTexture->GetRendererID();
-			ImGui::Image((void*)textureID, ImVec2{ 1280, 720 }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 			ImGui::End();
 		}
 	}

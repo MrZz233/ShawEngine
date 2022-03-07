@@ -45,9 +45,9 @@ namespace ShawEngine {
 		dispatcher.Dispatch<WindowResizeEvent>(SE_BIND_EVENT_FN(Application::OnWindowResize));
 		for (auto it = m_LayerStack.rbegin(); it != m_LayerStack.rend(); ++it) 
 		{
-			(*it)->OnEvent(e);
 			if (e.Handled)
 				break;
+			(*it)->OnEvent(e);
 		}
 	}
 

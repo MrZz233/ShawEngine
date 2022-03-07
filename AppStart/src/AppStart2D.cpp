@@ -25,25 +25,43 @@ void AppStart2D::OnDetach()
 void AppStart2D::OnUpdate(ShawEngine::Timestep ts)
 {
 	SE_PROFILE_FUNCTION();
-	// Update
-	m_CameraController.OnUpdate(ts);
+	if(!ImGui::GetIO().WantCaptureKeyboard)
+		// Update
+		m_CameraController.OnUpdate(ts);
+
 	// Render
+	ShawEngine::Renderer2D::ResetStats();
 	{
 		SE_PROFILE_SCOPE("Renderer Prep");
 		ShawEngine::RenderCommand::SetClearColor({ 0.2f, 0.4f, 0.4f, 1 });
 		ShawEngine::RenderCommand::Clear();
 	}
+
 	// Draw
 	{
 		SE_PROFILE_SCOPE("Renderer Draw");
+		static float rotation = 0.0f;
+		rotation += ts * 50.0f;
+		/*
+		每一次调用BeginScene和EndScene才执行一次DrawCall
+		*/
 		ShawEngine::Renderer2D::BeginScene(m_CameraController.GetCamera());
+		ShawEngine::Renderer2D::DrawRotatedQuad({ 1.0f, 0.0f }, { 0.8f, 0.6f }, rotation, m_SquareColor1);
 		ShawEngine::Renderer2D::DrawQuad({ -1.0f, 0.0f }, { 0.8f, 0.8f }, m_SquareColor1);
-		ShawEngine::Renderer2D::DrawQuad({ 0.5f, -0.5f }, { 0.5f, 0.75f }, m_SquareColor2);
-		
-		//开启了深度测试，背景的深度设置为-0.1
-		//ShawEngine::Renderer2D::DrawRotatedQuad({ 0.0f, 0.0f, -0.1f }, { 10.0f, 10.0f }, 0.0f, m_CheckerboardTexture,10.0f);
-		//ShawEngine::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f }, { 10.0f, 10.0f }, m_CheckerboardTexture, 10.0f);
+		ShawEngine::Renderer2D::DrawQuad({ 0.2f, -0.8f }, { 0.5f, 0.75f }, m_SquareColor2);	
+		ShawEngine::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f }, { 10.0f, 10.0f }, m_CheckerboardTexture, 5.0f);
+		ShawEngine::Renderer2D::DrawRotatedQuad({ -2.0f, 0.0f, 0.0f }, { 1.0f, 1.0f }, rotation, m_CheckerboardTexture, 20.0f, { 0.8f,0.4f,0.4f,1.0f });
+		ShawEngine::Renderer2D::EndScene();
 
+		ShawEngine::Renderer2D::BeginScene(m_CameraController.GetCamera());
+		for (float y = -3.0f; y < 3.0f; y += 0.3f)
+		{
+			for (float x = -3.0f; x < 3.0f; x += 0.3f)
+			{
+				glm::vec4 color = { (x + 3.0f) / 6.0f, 0.4f, (y + 3.0f) / 6.0f, 0.5f };
+				ShawEngine::Renderer2D::DrawRotatedQuad({ x+4, y }, { 0.2f, 0.2f }, rotation, color);
+			}
+		}
 		ShawEngine::Renderer2D::EndScene();
 	}
 	++fps_count;
@@ -62,9 +80,18 @@ void AppStart2D::OnImGuiRender()
 {
 	SE_PROFILE_FUNCTION();
 	ImGui::Begin("Settings");
+	auto stats = ShawEngine::Renderer2D::GetStats();
+	ImGui::Text("Renderer2D Stats:");
+	ImGui::Text("Draw Calls: %d", stats.DrawCalls);
+	ImGui::Text("Quads: %d", stats.QuadCount);
+	ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
+	ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
+
 	ImGui::ColorEdit4("Square Color_1", glm::value_ptr(m_SquareColor1));
 	ImGui::ColorEdit4("Square Color_2", glm::value_ptr(m_SquareColor2));
 	ImGui::Text("FPS: %d", fps);
+	char* char_test = new char[10]{};
+	ImGui::InputText("test: ", char_test, 10);
 
 	ImGui::End();
 }

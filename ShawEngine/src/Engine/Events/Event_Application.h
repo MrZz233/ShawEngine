@@ -11,8 +11,8 @@ namespace ShawEngine {
 		WindowResizeEvent(unsigned int width, unsigned int height)
 			: m_Width(width), m_Height(height) {}
 
-		inline unsigned int GetWidth() const { return m_Width; }
-		inline unsigned int GetHeight() const { return m_Height; }
+		unsigned int GetWidth() const { return m_Width; }
+		unsigned int GetHeight() const { return m_Height; }
 		
 		//重写TosTring()，打印事件类型，以及详情
 		std::string ToString() const override

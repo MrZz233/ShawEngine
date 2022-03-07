@@ -23,9 +23,9 @@ namespace ShawEngine {
 		void PushLayer(Layer* layer);
 		void PushOverLay(Layer* layer);
 
-		inline Window& GetWindow() { return *m_Windows; }
+		Window& GetWindow() { return *m_Windows; }
 
-		inline static Application& Get() { return *s_Instance; }
+		static Application& Get() { return *s_Instance; }
 		bool OnWindowClose(WindowCloseEvent& e);
 	private:
 		void Run();

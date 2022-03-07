@@ -42,7 +42,7 @@ namespace ShawEngine {
 			//≥ı ºªØglfw
 			SE_CORE_INFO("Initializing GLFW");
 			int success = glfwInit();
-			SE_CORE_ASSERT(success, "Could not intialize GLFW!");
+			SE_CORE_ASSERT(success, "Could not initialize GLFW!");
 			glfwSetErrorCallback(GLFWErrorCallback);
 		}
 		{

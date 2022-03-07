@@ -8,7 +8,7 @@ namespace ShawEngine {
 	{
 	public:
 		//获取按键码
-		inline int GetKeyCode() const { return m_KeyCode; }
+		int GetKeyCode() const { return m_KeyCode; }
 		//通过宏快速实现事件分类相关
 		//GetCategoryFlags()，返回事件类型为：键盘 和 输入
 		EVENT_CLASS_CATEGORY(EventCategoryKeyboard | EventCategoryInput)
@@ -27,7 +27,7 @@ namespace ShawEngine {
 		KeyPressedEvent(int keycode, int repeatCount)
 			: KeyEvent(keycode), m_RepeatCount(repeatCount) {}
 
-		inline int GetRepeatCount() const { return m_RepeatCount; }
+		int GetRepeatCount() const { return m_RepeatCount; }
 
 		//重写TosTring()，打印事件类型，以及详情
 		std::string ToString() const override

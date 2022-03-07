@@ -78,7 +78,7 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>SE_PLATFORM_WINDOWS;SE_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SE_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\ShawEngine\vendor\spdlog\include;..\ShawEngine\src;..\ShawEngine\vendor;..\ShawEngine\vendor\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
@@ -96,7 +96,7 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>SE_PLATFORM_WINDOWS;SE_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SE_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\ShawEngine\vendor\spdlog\include;..\ShawEngine\src;..\ShawEngine\vendor;..\ShawEngine\vendor\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -117,7 +117,7 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>SE_PLATFORM_WINDOWS;SE_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SE_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\ShawEngine\vendor\spdlog\include;..\ShawEngine\src;..\ShawEngine\vendor;..\ShawEngine\vendor\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -135,6 +135,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\AppStart2D.h" />
+    <ClInclude Include="src\ExampleLayer.h" />
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="src\AppStart.cpp" />
     <ClCompile Include="src\AppStart2D.cpp" />
     <ClCompile Include="src\ExampleLayer.cpp" />
@@ -143,13 +147,6 @@
     <ProjectReference Include="..\ShawEngine\ShawEngine.vcxproj">
       <Project>{6E7FE1CD-5A37-231B-C33E-FC76AF15BE0B}</Project>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="assets\shaders\FlatColor.glsl" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="src\AppStart2D.h" />
-    <ClInclude Include="src\ExampleLayer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

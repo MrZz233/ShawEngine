@@ -54,7 +54,7 @@ namespace ShawEngine {
 		virtual std::string ToString() const { return GetName(); }
 
 		//查看事件是否输入当前分类
-		inline bool IsInCategory(EventCategory category)
+		bool IsInCategory(EventCategory category)
 		{
 			//与运算，若category在当前分类中，则返回非零
 			return GetCategoryFlags() & category;

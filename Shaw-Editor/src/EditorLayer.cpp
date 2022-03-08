@@ -30,10 +30,10 @@ namespace ShawEngine {
 		m_SquareEntity.AddComponent<SpriteRendererComponent>(glm::vec4{ 0.0f, 1.0f, 0.0f, 1.0f });
 
 		m_CameraEntity = m_ActiveScene->CreateEntity("Camera Entity");
-		m_CameraEntity.AddComponent<CameraComponent>(glm::ortho(-16.0f, 16.0f, -9.0f, 9.0f, -1.0f, 1.0f));
+		m_CameraEntity.AddComponent<CameraComponent>();
 
 		m_SecondCamera = m_ActiveScene->CreateEntity("Clip-Space Entity");
-		auto& cc = m_SecondCamera.AddComponent<CameraComponent>(glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f));
+		auto& cc = m_SecondCamera.AddComponent<CameraComponent>(); 
 		cc.Primary = false;
 
 	}
@@ -51,16 +51,17 @@ namespace ShawEngine {
 		SE_PROFILE_FUNCTION();
 		//默认创建的FrameBuffer大小为1280*720
 		FramebufferSpecification spec = m_Framebuffer->GetSpecification();
-		if (m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f && (spec.Width != m_ViewportSize.x || spec.Height != m_ViewportSize.y))
+		if ( m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f && (spec.Width != m_ViewportSize.x || spec.Height != m_ViewportSize.y))
 		{
 			m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 			m_CameraController.OnResize(m_ViewportSize.x, m_ViewportSize.y);
-			//m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+			m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+			std::cout << "Size Change" << "\n";
 		}
 
 		// Update
-		if (m_ViewportFocused)
-			m_CameraController.OnUpdate(ts);
+		//if (m_ViewportFocused)
+			//m_CameraController.OnUpdate(ts);
 
 		// Render初始化
 		Renderer2D::ResetStats();
@@ -153,7 +154,7 @@ namespace ShawEngine {
 				ImGui::EndMenuBar();
 			}
 
-			ImGui::Begin("Settings");
+			ImGui::Begin("Information:");
 			auto stats = Renderer2D::GetStats();
 			ImGui::Text("FPS: %d", fps);
 			ImGui::Text("Renderer2D Stats:");
@@ -161,30 +162,38 @@ namespace ShawEngine {
 			ImGui::Text("Quads: %d", stats.QuadCount);
 			ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
 			ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
+			
 			if (m_SquareEntity)
 			{
-				ImGui::Separator();
+				//ImGui::Separator();
 				auto& tag = m_SquareEntity.GetComponent<TagComponent>().Tag;
 				ImGui::Text("%s", tag.c_str());
 				auto& squareColor = m_SquareEntity.GetComponent<SpriteRendererComponent>().Color;
-				ImGui::Text("Square Color");
-				ImGui::ColorEdit4("", glm::value_ptr(squareColor));
+				ImGui::ColorEdit4("Square Color", glm::value_ptr(squareColor));
 				auto& squarePosition = m_SquareEntity.GetComponent<TransformComponent>().Transform[3];
-				ImGui::Text("Square Transform");
-				ImGui::DragFloat3("", glm::value_ptr(squarePosition), 0.01f);
-				ImGui::Separator();
-				ImGui::Text("Camera Transform");
-				ImGui::DragFloat3("",glm::value_ptr(m_CameraEntity.GetComponent<TransformComponent>().Transform[3]),0.01f);
-				if (ImGui::Checkbox("Camera A", &m_PrimaryCamera))
-				{
-					m_CameraEntity.GetComponent<CameraComponent>().Primary = m_PrimaryCamera;
-					m_SecondCamera.GetComponent<CameraComponent>().Primary = !m_PrimaryCamera;
-				}
-				///auto& camera = m_SecondCamera.GetComponent<CameraComponent>().Camera;
-				//float orthoSize = camera.GetOrthographicSize();
-				//if (ImGui::DragFloat("Second Camera Ortho Size", &orthoSize))
-					//camera.SetOrthographicSize(orthoSize);
-			}		
+				ImGui::DragFloat3("Square Transform", glm::value_ptr(squarePosition), 0.01f);
+				//std::cout << "x:"<<squarePosition.x <<"  y:"<<squarePosition.y<<"  z:"<<squarePosition.z<< "\n";
+				//ImGui::Separator();
+			}	
+
+			auto& tag = m_CameraEntity.GetComponent<TagComponent>().Tag;
+			ImGui::Text("%s", tag.c_str());
+			auto& cameraPosition = m_CameraEntity.GetComponent<TransformComponent>().Transform[3];
+			ImGui::DragFloat3("Camera Transform", glm::value_ptr(cameraPosition), 0.01f);
+			//std::cout << "x:" << cameraPosition.x << "  y:" << cameraPosition.y << "  z:" << cameraPosition.z << "\n";
+			//切换主摄像机
+			if (ImGui::Checkbox("Camera A", &m_PrimaryCamera))
+			{
+				m_CameraEntity.GetComponent<CameraComponent>().Primary = m_PrimaryCamera;
+				m_SecondCamera.GetComponent<CameraComponent>().Primary = !m_PrimaryCamera;
+			}
+
+			{
+				auto& camera = m_SecondCamera.GetComponent<CameraComponent>().Camera;
+				float orthoSize = camera.GetOrthographicSize();
+				if (ImGui::DragFloat("Second Camera visual field", &orthoSize, 0.1f, 0, 100.0f))
+					camera.SetOrthographicSize(orthoSize);
+			}
 			ImGui::End();
 
 			ImGui::Begin("Viewport");

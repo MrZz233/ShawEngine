@@ -15,12 +15,27 @@ namespace ShawEngine {
 	{
 		SE_PROFILE_FUNCTION();
 
-		m_CheckerboardTexture = ShawEngine::Texture2D::Create("assets/textures/Checkerboard.png");
-		m_LelouchTexture = ShawEngine::Texture2D::Create("assets/textures/LelouchLogo.png");
-		ShawEngine::FramebufferSpecification fbSpec;
+		m_CheckerboardTexture = Texture2D::Create("assets/textures/Checkerboard.png");
+		m_LelouchTexture = Texture2D::Create("assets/textures/LelouchLogo.png");
+		FramebufferSpecification fbSpec;
 		fbSpec.Width = 1280;
 		fbSpec.Height = 720;
-		m_Framebuffer = ShawEngine::Framebuffer::Create(fbSpec);
+		m_Framebuffer = Framebuffer::Create(fbSpec);
+
+		//创建一个场景
+		m_ActiveScene = CreateRef<Scene>();
+		//创建一个square实体
+		m_SquareEntity = m_ActiveScene->CreateEntity("Square");
+		//给square添加SpriteRendererComponent
+		m_SquareEntity.AddComponent<SpriteRendererComponent>(glm::vec4{ 0.0f, 1.0f, 0.0f, 1.0f });
+
+		m_CameraEntity = m_ActiveScene->CreateEntity("Camera Entity");
+		m_CameraEntity.AddComponent<CameraComponent>(glm::ortho(-16.0f, 16.0f, -9.0f, 9.0f, -1.0f, 1.0f));
+
+		m_SecondCamera = m_ActiveScene->CreateEntity("Clip-Space Entity");
+		auto& cc = m_SecondCamera.AddComponent<CameraComponent>(glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f));
+		cc.Primary = false;
+
 	}
 
 	void EditorLayer::OnDetach()
@@ -28,49 +43,36 @@ namespace ShawEngine {
 		SE_PROFILE_FUNCTION();
 	}
 
-	void EditorLayer::OnUpdate(ShawEngine::Timestep ts)
+	void EditorLayer::OnUpdate(Timestep ts)
 	{
 		static auto time_last = std::chrono::high_resolution_clock::now();
 		static auto time_new = std::chrono::high_resolution_clock::now();
 		static uint32_t fps_count = 0;
 		SE_PROFILE_FUNCTION();
+		//默认创建的FrameBuffer大小为1280*720
+		FramebufferSpecification spec = m_Framebuffer->GetSpecification();
+		if (m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f && (spec.Width != m_ViewportSize.x || spec.Height != m_ViewportSize.y))
+		{
+			m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+			m_CameraController.OnResize(m_ViewportSize.x, m_ViewportSize.y);
+			//m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+		}
+
 		// Update
 		if (m_ViewportFocused)
 			m_CameraController.OnUpdate(ts);
 
-		// Render
-		ShawEngine::Renderer2D::ResetStats();
-		{
-			SE_PROFILE_SCOPE("Renderer Prep");
-			m_Framebuffer->Bind();
-			ShawEngine::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
-			ShawEngine::RenderCommand::Clear();
-		}
-
-		{
-			static float rotation = 0.0f;
-			rotation += ts * 50.0f;
-
-			SE_PROFILE_SCOPE("Renderer Draw");
-			ShawEngine::Renderer2D::BeginScene(m_CameraController.GetCamera());
-			ShawEngine::Renderer2D::DrawRotatedQuad({ 1.0f, 0.0f }, { 0.8f, 0.6f }, rotation, m_SquareColor);
-			ShawEngine::Renderer2D::DrawQuad({ -1.0f, 0.0f }, { 0.8f, 0.8f }, m_SquareColor);
-			ShawEngine::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f }, { 3.0f, 3.0f }, m_CheckerboardTexture, 5.0f);
-			ShawEngine::Renderer2D::DrawQuad({ -0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f }, m_LelouchTexture, 3.0f);
-			ShawEngine::Renderer2D::EndScene();
-
-			ShawEngine::Renderer2D::BeginScene(m_CameraController.GetCamera());
-			for (float y = -1.0f; y < 1.0f; y += 0.2f)
-			{
-				for (float x = -1.0f; x < 1.0f; x += 0.2f)
-				{
-					glm::vec4 color = { (x + 1.0f) / 2.0f, 0.4f, (y + 1.0f) / 2.0f, 0.5f };
-					ShawEngine::Renderer2D::DrawRotatedQuad({ x , y }, { 0.1f, 0.1f }, rotation, color);
-				}
-			}
-			ShawEngine::Renderer2D::EndScene();
-			m_Framebuffer->Unbind();
-		}
+		// Render初始化
+		Renderer2D::ResetStats();
+		//清空背景
+		m_Framebuffer->Bind();
+		RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
+		RenderCommand::Clear();
+		//Update场景
+		//Renderer2D::BeginScene(m_CameraController.GetCamera());
+		m_ActiveScene->OnUpdate(ts);
+		//Renderer2D::EndScene();
+		m_Framebuffer->Unbind();
 
 		++fps_count;
 		time_new = std::chrono::high_resolution_clock::now();
@@ -83,6 +85,7 @@ namespace ShawEngine {
 			time_last = time_new;
 		}
 	}
+
 
 	void EditorLayer::OnImGuiRender()
 	{
@@ -143,7 +146,7 @@ namespace ShawEngine {
 					// which we can't undo at the moment without finer window depth/z control.
 					//ImGui::MenuItem("Fullscreen", NULL, &opt_fullscreen_persistant);
 
-					if (ImGui::MenuItem("Exit")) ShawEngine::Application::Get().Close();
+					if (ImGui::MenuItem("Exit")) Application::Get().Close();
 					ImGui::EndMenu();
 				}
 
@@ -151,14 +154,37 @@ namespace ShawEngine {
 			}
 
 			ImGui::Begin("Settings");
-			auto stats = ShawEngine::Renderer2D::GetStats();
+			auto stats = Renderer2D::GetStats();
 			ImGui::Text("FPS: %d", fps);
 			ImGui::Text("Renderer2D Stats:");
 			ImGui::Text("Draw Calls: %d", stats.DrawCalls);
 			ImGui::Text("Quads: %d", stats.QuadCount);
 			ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
 			ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
-			ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));
+			if (m_SquareEntity)
+			{
+				ImGui::Separator();
+				auto& tag = m_SquareEntity.GetComponent<TagComponent>().Tag;
+				ImGui::Text("%s", tag.c_str());
+				auto& squareColor = m_SquareEntity.GetComponent<SpriteRendererComponent>().Color;
+				ImGui::Text("Square Color");
+				ImGui::ColorEdit4("", glm::value_ptr(squareColor));
+				auto& squarePosition = m_SquareEntity.GetComponent<TransformComponent>().Transform[3];
+				ImGui::Text("Square Transform");
+				ImGui::DragFloat3("", glm::value_ptr(squarePosition), 0.01f);
+				ImGui::Separator();
+				ImGui::Text("Camera Transform");
+				ImGui::DragFloat3("",glm::value_ptr(m_CameraEntity.GetComponent<TransformComponent>().Transform[3]),0.01f);
+				if (ImGui::Checkbox("Camera A", &m_PrimaryCamera))
+				{
+					m_CameraEntity.GetComponent<CameraComponent>().Primary = m_PrimaryCamera;
+					m_SecondCamera.GetComponent<CameraComponent>().Primary = !m_PrimaryCamera;
+				}
+				///auto& camera = m_SecondCamera.GetComponent<CameraComponent>().Camera;
+				//float orthoSize = camera.GetOrthographicSize();
+				//if (ImGui::DragFloat("Second Camera Ortho Size", &orthoSize))
+					//camera.SetOrthographicSize(orthoSize);
+			}		
 			ImGui::End();
 
 			ImGui::Begin("Viewport");
@@ -169,19 +195,9 @@ namespace ShawEngine {
 			//等价于   聚焦且悬浮   ImGui不处理事件  
 			bool _block = !m_ViewportFocused || !m_ViewportHovered;
 			Application::Get().GetImGuiLayer()->BlockEvents(_block);
-
 			ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
-			if (m_ViewportSize != *((glm::vec2*) & viewportPanelSize))
-			{
-				//调整渲染图像的大小
-				m_Framebuffer->Resize((uint32_t)viewportPanelSize.x, (uint32_t)viewportPanelSize.y);
-				//根据ImGui窗口大小调整ViewPort
-				m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
-				//根据ViewPort调整相机的视角
-				m_CameraController.OnResize(viewportPanelSize.x, viewportPanelSize.y);
-			}
 			uint32_t TextureID = m_Framebuffer->GetColorAttachmentRendererID();
-			ImGui::Image((void*)TextureID, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+			ImGui::Image((void*)TextureID, ImVec2{ viewportPanelSize.x, viewportPanelSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 			ImGui::End();
 
 			ImGui::Begin("DepthSpace");
@@ -194,7 +210,7 @@ namespace ShawEngine {
 		}
 	}
 
-	void EditorLayer::OnEvent(ShawEngine::Event& e)
+	void EditorLayer::OnEvent(Event& e)
 	{
 		m_CameraController.OnEvent(e);
 	}

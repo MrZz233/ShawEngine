@@ -26,10 +26,9 @@ namespace ShawEngine {
 		//m_ViewMatrix = glm::inverse(transform);
 		
 		//不用求逆
-		SE_PROFILE_FUNCTION();
+		//SE_PROFILE_FUNCTION();
 		glm::mat4 trans = glm::translate(glm::mat4(1.0f), -m_Position);
-		glm::mat4 rotate = glm::rotate(glm::mat4(1.0f), glm::radians(m_Rotation), glm::vec3(0, 0, 1));
-		rotate = glm::transpose(rotate);
+		glm::mat4 rotate = glm::transpose(glm::rotate(glm::mat4(1.0f), glm::radians(m_Rotation), glm::vec3(0, 0, 1)));
 
 		//物体先平移后旋转 == 摄像机先旋转后再平移。
 		//即xy方向会跟着摄像机变

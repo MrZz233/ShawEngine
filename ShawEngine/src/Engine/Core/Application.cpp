@@ -16,7 +16,11 @@ namespace ShawEngine {
 
 		m_Windows = Window::Create(WindowProps(name));
 		m_Windows->SetEventCallback(SE_BIND_EVENT_FN(Application::OnEvent));
-
+		//[this]				捕获当前类中的this指针
+		//(auto&&... args)		接收可变参数
+		//decltype(auto)		自动推导返回类型
+		//std::forward<decltype(args)>(args)...		完美转发
+		//m_Windows->SetEventCallback([this](auto&&... args) -> decltype(auto) { return this->OnEvent(std::forward<decltype(args)>(args)...); });
 		Renderer::Init();
 		m_ImGuiLayer = new ImGuiLayer();
 		PushOverLay(m_ImGuiLayer);

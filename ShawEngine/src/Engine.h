@@ -12,6 +12,9 @@
 #include "Engine/Renderer/OrthographicCameraController.h"
 //ImGui²ã
 #include "Engine/ImGui/ImGuiLayer.h"
+#include "Engine/Scene/Scene.h"
+#include "Engine/Scene/Entity.h"
+#include "Engine/Scene/Components.h"
 
 // ---Renderer------------------------
 #include "Engine/Renderer/Renderer.h"

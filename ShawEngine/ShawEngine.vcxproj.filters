@@ -1473,6 +1473,8 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Hazel\Hazel\src\Hazel\Core\Assert.h" />
+    <ClInclude Include="src\Engine\Core\Assert.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Engine\Core\Application.cpp">

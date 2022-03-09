@@ -3,18 +3,23 @@
 #include <memory>
 #include "Engine/Core/PlatformDetection.h"
 
-
 #ifdef SE_DEBUG
-	#define SE_ENABLE_ASSERTS
+	#if defined(SE_PLATFORM_WINDOWS)
+		#define SE_DEBUGBREAK() __debugbreak()
+	#elif defined(SE_PLATFORM_LINUX)
+		#include <signal.h>
+		#define SE_DEBUGBREAK() raise(SIGTRAP)
+	#else
+		#error "Platform doesn't support debugbreak yet!"
+	#endif
+		#define SE_ENABLE_ASSERTS
+	#else
+		#define SE_DEBUGBREAK()
 #endif
 
-#ifdef SE_ENABLE_ASSERTS
-	#define SE_CLIENT_ASSERT(x, ...) { if(!(x)) { SE_CLIENT_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
-	#define SE_CORE_ASSERT(x, ...) { if(!(x)) { SE_CORE_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
-#else
-	#define SE_CLIENT_ASSERT(x, ...)
-	#define SE_CORE_ASSERT(x, ...)
-#endif
+
+#define SE_EXPAND_MACRO(x) x
+#define SE_STRINGIFY_MACRO(x) #x
 
 #define BIT(x) (1<<x)
 
@@ -40,3 +45,6 @@ namespace ShawEngine {
 		return std::make_shared<T>(std::forward<Args>(args)...);
 	}
 }
+
+#include "Engine/Core/Log.h"
+#include "Engine/Core/Assert.h"

@@ -61,7 +61,7 @@ namespace ShawEngine {
 			virtual void OnUpdate(Timestep ts) override
 			{
 				auto& transform = GetComponent<TransformComponent>().Transform;
-				float speed = 5.0f;
+				float speed = 2.0f;
 
 				if (Input::IsKeyPressed(Key::A))
 					transform[3][0] -= speed * ts;

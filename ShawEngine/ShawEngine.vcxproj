@@ -144,8 +144,10 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Hazel\Hazel\src\Hazel\Core\Assert.h" />
     <ClInclude Include="src\Engine.h" />
     <ClInclude Include="src\Engine\Core\Application.h" />
+    <ClInclude Include="src\Engine\Core\Assert.h" />
     <ClInclude Include="src\Engine\Core\Base.h" />
     <ClInclude Include="src\Engine\Core\EntryPoint.h" />
     <ClInclude Include="src\Engine\Core\Input.h" />

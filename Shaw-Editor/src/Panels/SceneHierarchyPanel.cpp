@@ -1,7 +1,6 @@
 #include "sepch.h"
 #include "SceneHierarchyPanel.h"
 #include "Engine/Scene/Components.h"
-#include "Engine/Core/Log.h"
 #include <imgui/imgui.h>
 #include <glm/gtc/type_ptr.hpp>
 
@@ -128,26 +127,26 @@ namespace ShawEngine {
 						camera.SetPerspectiveVerticalFOV(glm::radians(perspectiveVerticalFov));
 
 					float perspectiveNear = camera.GetPerspectiveNearClip();
-					if (ImGui::DragFloat("Near", &perspectiveNear))
+					if (ImGui::DragFloat("Near", &perspectiveNear, 0.01f))
 						camera.SetPerspectiveNearClip(perspectiveNear);
 
 					float perspectiveFar = camera.GetPerspectiveFarClip();
-					if (ImGui::DragFloat("Far", &perspectiveFar))
+					if (ImGui::DragFloat("Far", &perspectiveFar, 1.0f))
 						camera.SetPerspectiveFarClip(perspectiveFar);
 				}
 
 				if (camera.GetProjectionType() == SceneCamera::ProjectionType::Orthographic)
 				{
 					float orthoSize = camera.GetOrthographicSize();
-					if (ImGui::DragFloat("Size", &orthoSize))
+					if (ImGui::DragFloat("Size", &orthoSize, 0.1f))
 						camera.SetOrthographicSize(orthoSize);
 
 					float orthoNear = camera.GetOrthographicNearClip();
-					if (ImGui::DragFloat("Near", &orthoNear))
+					if (ImGui::DragFloat("Near", &orthoNear, 0.1f))
 						camera.SetOrthographicNearClip(orthoNear);
 
 					float orthoFar = camera.GetOrthographicFarClip();
-					if (ImGui::DragFloat("Far", &orthoFar))
+					if (ImGui::DragFloat("Far", &orthoFar, 0.1f))
 						camera.SetOrthographicFarClip(orthoFar);
 
 					ImGui::Checkbox("Fixed Aspect Ratio", &cameraComponent.FixedAspectRatio);

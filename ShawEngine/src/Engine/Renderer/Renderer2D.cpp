@@ -125,12 +125,9 @@ namespace ShawEngine {
 		s_Data.TextureShader->Bind();
 		//设置相机
 		s_Data.TextureShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
-		//索引计数清零
-		s_Data.QuadIndexCount = 0;
-		//VBO指针 指向 VBO基址
-		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
-		//TextureIndex设置为1
-		s_Data.TextureSlotIndex = 1;	//0是纯白贴图
+		
+		StartBatch();
+		
 	}
 
 	void Renderer2D::BeginScene(const Camera& camera, const glm::mat4& transform)
@@ -142,27 +139,35 @@ namespace ShawEngine {
 		s_Data.TextureShader->Bind();
 		s_Data.TextureShader->SetMat4("u_ViewProjection", viewProj);
 
-		s_Data.QuadIndexCount = 0;
-		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
-
-		s_Data.TextureSlotIndex = 1;
+		StartBatch();
 	}
 
 	void Renderer2D::EndScene()
 	{
 		SE_PROFILE_FUNCTION();
-		//计算需要上传的VBO大小  VBO指针 - VBO基址
-		uint32_t dataSize = (uint32_t)((uint8_t*)s_Data.QuadVertexBufferPtr - (uint8_t*)s_Data.QuadVertexBufferBase);
-		//设置VBO的内容
-		s_Data.QuadVertexBuffer->SetData(s_Data.QuadVertexBufferBase, dataSize);
 		//准备渲染
 		Flush();
+	}
+
+
+	void Renderer2D::StartBatch() {
+		//索引计数清零
+		s_Data.QuadIndexCount = 0;
+		//VBO指针 指向 VBO基址
+		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
+		//TextureIndex设置为1
+		s_Data.TextureSlotIndex = 1;	//0是纯白贴图
 	}
 
 	void Renderer2D::Flush()
 	{
 		if (s_Data.QuadIndexCount == 0)
 			return;
+
+		//计算需要上传的VBO大小  VBO指针 - VBO基址
+		uint32_t dataSize = (uint32_t)((uint8_t*)s_Data.QuadVertexBufferPtr - (uint8_t*)s_Data.QuadVertexBufferBase);
+		//设置VBO的内容
+		s_Data.QuadVertexBuffer->SetData(s_Data.QuadVertexBufferBase, dataSize);
 
 		//绑定每一张贴图
 		for (uint32_t i = 0; i < s_Data.TextureSlotIndex; i++)
@@ -174,16 +179,10 @@ namespace ShawEngine {
 	}
 
 	//当场景中渲染的平面数量大于设定的最大值，需要分批次渲染
-	void Renderer2D::FlushAndReset()
+	void Renderer2D::NextBatch()
 	{
-		//由于平面数量已经达到最大值，所以需要把当前的顶点先渲染
-		EndScene();
-		//渲染完当前的顶点数据后
-		//清空Index计数 和 重置VBO指针 ， 重置TextureSlotIndex为1
-		s_Data.QuadIndexCount = 0;
-		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
-
-		s_Data.TextureSlotIndex = 1;
+		Flush();
+		StartBatch();
 	}
 
 	//vec2 position  |  size  |  color
@@ -210,7 +209,7 @@ namespace ShawEngine {
 		//判断当前的平面数量是否已经超过最大值
 		if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
 			//如果达到限制，就先渲染一批，并重置计数
-			FlushAndReset();
+			NextBatch();
 		//不提供贴图的话，默认贴图为纯白
 		const float textureIndex = 0.0f;
 		const float tilingFactor = 1.0f;
@@ -256,7 +255,7 @@ namespace ShawEngine {
 		SE_PROFILE_FUNCTION();
 		//渲染并重置计数
 		if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
-			FlushAndReset();
+			NextBatch();
 
 		//constexpr glm::vec4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
 
@@ -278,7 +277,7 @@ namespace ShawEngine {
 			s_Data.TextureSlots[s_Data.TextureSlotIndex] = texture;
 			s_Data.TextureSlotIndex++;
 			if (s_Data.TextureSlotIndex >= Renderer2DData::MaxTextureSlots)
-				FlushAndReset();
+				NextBatch();
 		}
 		//设置VBO 4个顶点的值
 		constexpr size_t quadVertexCount = 4;

@@ -62,7 +62,8 @@ namespace ShawEngine {
 
 		//Set将用户数据m_Data和m_Window相关联
 		glfwSetWindowUserPointer(m_Window, &m_Data);
-		SetVSync(false);
+		//设置垂直同步
+		SetVSync(true);
 		//设置glfw回调
 		//调整窗口大小
 		glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height) {

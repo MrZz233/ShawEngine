@@ -1,5 +1,5 @@
 #pragma once
-#include "sepch.h"
+#include <functional>
 #include "Engine/Core/Base.h"
 
 namespace ShawEngine {

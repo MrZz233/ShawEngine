@@ -2,6 +2,7 @@
 //#include "Application.h"
 #include "Engine/Core/Base.h"
 #include "Engine/Core/Log.h"
+#include "Engine/Debug/Instrumentor.h"
 
 #ifdef SE_PLATFORM_WINDOWS
 	//Step1¡¢³ÌÐòÆðµã

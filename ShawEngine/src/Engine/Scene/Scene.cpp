@@ -53,6 +53,31 @@ namespace ShawEngine {
 
 	void Scene::OnUpdate(Timestep ts)
 	{
+		// Update scripts
+		{
+			//找出有NativeScript组件的entt::entity
+			//匿名函数 entity表示实体ID，nsc表示实际挂载的NativeScript组件
+			m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
+				{
+					//nsc.Instance指向一个ScriptableEntity，比如CameraController
+					//如果nsc中的Instance还没有指向任何脚本物体，就执行初始化函数
+					if (!nsc.Instance)
+					{
+						nsc.InstantiateFunction();	//让nsc.Instance指向实际的类型new T()，T继承自ScriptableEntity
+						//给Instance中m_Enitity赋值{entt::entity,场景指针}
+						nsc.Instance->m_Entity = Entity{ entity, this };
+						//如果nsc中的OnCreate不为空，就执行
+						if (nsc.OnCreateFunction)
+							//因为ScriptableEntity中没有OnCreate，所以不能按下面方式调用
+							//nsc.Instance->OnCreate()
+							nsc.OnCreateFunction();
+					}
+					//如果nsc中的OnUpdate不为空，就执行
+					if (nsc.OnUpdateFunction)
+						nsc.OnUpdateFunction(ts);
+				});
+		}
+
 		// Render 2D
 		Camera* mainCamera = nullptr;
 		glm::mat4* cameraTransform = nullptr;

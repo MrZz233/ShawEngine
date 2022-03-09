@@ -5,7 +5,9 @@
 #include <algorithm>
 #include <fstream>
 #include <thread>
-//#include <iomanip>
+#include <mutex>
+#include <sstream>
+#include "Engine/Core/Log.h"
 
 namespace ShawEngine {
 

@@ -1,5 +1,6 @@
 #pragma once
 #include "Engine/Events/Event.h"
+#include "Engine/Core/KeyCodes.h"
 
 namespace ShawEngine {
 
@@ -14,20 +15,20 @@ namespace ShawEngine {
 		EVENT_CLASS_CATEGORY(EventCategoryKeyboard | EventCategoryInput)
 
 	protected:
-		KeyEvent(int keycode)
+		KeyEvent(const KeyCode keycode)
 			: m_KeyCode(keycode) {}
 		//按键码
-		int m_KeyCode;
+		KeyCode m_KeyCode;
 	};
 
 	//按键事件 继承自键盘事件
 	class KeyPressedEvent : public KeyEvent
 	{
 	public:
-		KeyPressedEvent(int keycode, int repeatCount)
+		KeyPressedEvent(const KeyCode keycode, const uint16_t repeatCount)
 			: KeyEvent(keycode), m_RepeatCount(repeatCount) {}
 
-		int GetRepeatCount() const { return m_RepeatCount; }
+		uint16_t GetRepeatCount() const { return m_RepeatCount; }
 
 		//重写TosTring()，打印事件类型，以及详情
 		std::string ToString() const override
@@ -41,14 +42,14 @@ namespace ShawEngine {
 		EVENT_CLASS_TYPE(KeyPressed)
 	private:
 		//按键重复计数
-		int m_RepeatCount;
+		uint16_t m_RepeatCount;
 	};
 
 	//释放键事件 继承自键盘事件
 	class KeyReleasedEvent : public KeyEvent
 	{
 	public:
-		KeyReleasedEvent(int keycode)
+		KeyReleasedEvent(const KeyCode keycode)
 			: KeyEvent(keycode) {}
 
 		//重写TosTring()，打印事件类型，以及详情
@@ -66,7 +67,7 @@ namespace ShawEngine {
 	class KeyTypedEvent : public KeyEvent
 	{
 	public:
-		KeyTypedEvent(int keycode)
+		KeyTypedEvent(const KeyCode keycode)
 			:KeyEvent(keycode) {}
 
 		std::string ToString() const override

@@ -246,7 +246,7 @@ namespace ShawEngine {
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
 			* glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
 
-		DrawQuad(transform, texture, tilingFactor);
+		DrawQuad(transform, texture, tilingFactor, tintColor);
 	}
 	
 	//实际渲染调用的函数 贴图
@@ -264,7 +264,7 @@ namespace ShawEngine {
 		for (uint32_t i = 1; i < s_Data.TextureSlotIndex; i++)
 		{
 			//匹配当前纹理和纹理槽中的纹理
-			if (*(s_Data.TextureSlots[i].get()) == *(texture.get()))
+			if (*(s_Data.TextureSlots[i]) == *texture)
 			{
 				textureIndex = (float)i;
 				break;

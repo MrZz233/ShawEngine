@@ -1,6 +1,6 @@
 #pragma once
 
-#include "sepch.h"
+#include <sstream>
 #include "Engine/Core/Base.h"
 #include "Engine/Events/Event.h"
 

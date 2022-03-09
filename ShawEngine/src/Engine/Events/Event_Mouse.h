@@ -1,5 +1,6 @@
 #pragma once
 #include "Engine/Events/Event.h"
+#include "Engine/Core/MouseCodes.h"
 
 namespace ShawEngine {
 
@@ -7,7 +8,7 @@ namespace ShawEngine {
 	class MouseMovedEvent : public Event
 	{
 	public:
-		MouseMovedEvent(float x, float y)
+		MouseMovedEvent(const float x, const float y)
 			: m_MouseX(x), m_MouseY(y) {}
 
 		float GetX() const { return m_MouseX; }
@@ -32,7 +33,7 @@ namespace ShawEngine {
 	class MouseScrolledEvent : public Event
 	{
 	public:
-		MouseScrolledEvent(float xOffset, float yOffset)
+		MouseScrolledEvent(const float xOffset, const float yOffset)
 			: m_XOffset(xOffset), m_YOffset(yOffset) {}
 
 		float GetXOffset() const { return m_XOffset; }
@@ -62,17 +63,17 @@ namespace ShawEngine {
 
 		EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryInput)
 	protected:
-		MouseButtonEvent(int button)
+		MouseButtonEvent(const MouseCode button)
 			: m_Button(button) {}
 		//鼠标按键码
-		int m_Button;
+		MouseCode m_Button;
 	};
 
 	//鼠标按键事件，继承自鼠标键事件
 	class MouseButtonPressedEvent : public MouseButtonEvent
 	{
 	public:
-		MouseButtonPressedEvent(int button)
+		MouseButtonPressedEvent(const MouseCode button)
 			: MouseButtonEvent(button) {}
 
 		std::string ToString() const override
@@ -89,7 +90,7 @@ namespace ShawEngine {
 	class MouseButtonReleasedEvent : public MouseButtonEvent
 	{
 	public:
-		MouseButtonReleasedEvent(int button)
+		MouseButtonReleasedEvent(const MouseCode button)
 			: MouseButtonEvent(button) {}
 
 		std::string ToString() const override

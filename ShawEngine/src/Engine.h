@@ -1,8 +1,9 @@
 #pragma once
-//供AppStart使用
-#include "Engine/Core/Application.h"
 //提供日志系统
 #include "Engine/Core/Base.h"
+
+//供AppStart使用
+#include "Engine/Core/Application.h"
 #include "Engine/Core/Log.h"
 #include "Engine/Core/Layer.h"
 #include "Engine/Core/Timestep.h"
@@ -14,6 +15,7 @@
 #include "Engine/ImGui/ImGuiLayer.h"
 #include "Engine/Scene/Scene.h"
 #include "Engine/Scene/Entity.h"
+#include "Engine/Scene/ScriptableEntity.h"
 #include "Engine/Scene/Components.h"
 
 // ---Renderer------------------------

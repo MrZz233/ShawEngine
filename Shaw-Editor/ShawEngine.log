@@ -1,7 +1,7 @@
-[00:20:46] [info] ShawEngine: Creating window ShawEngine Editor (1280, 720)
-[00:20:46] [info] ShawEngine: Initializing GLFW
-[00:20:47] [info] ShawEngine: OpenGL Info:
-[00:20:47] [info] ShawEngine:   Vendor: NVIDIA Corporation
-[00:20:47] [info] ShawEngine:   Renderer: NVIDIA GeForce GTX 1050 Ti/PCIe/SSE2
-[00:20:47] [info] ShawEngine:   Version: 4.6.0 NVIDIA 497.29
-[00:20:49] [info] ShawEngine: Terminating GLFW
+[00:57:06] [info] ShawEngine: Creating window ShawEngine Editor (1280, 720)
+[00:57:06] [info] ShawEngine: Initializing GLFW
+[00:57:07] [info] ShawEngine: OpenGL Info:
+[00:57:07] [info] ShawEngine:   Vendor: NVIDIA Corporation
+[00:57:07] [info] ShawEngine:   Renderer: NVIDIA GeForce GTX 1050 Ti/PCIe/SSE2
+[00:57:07] [info] ShawEngine:   Version: 4.6.0 NVIDIA 497.29
+[00:57:08] [info] ShawEngine: Terminating GLFW

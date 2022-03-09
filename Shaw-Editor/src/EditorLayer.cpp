@@ -26,7 +26,7 @@ namespace ShawEngine {
 		//创建一个场景
 		m_ActiveScene = CreateRef<Scene>();
 		//创建一个square实体
-		m_SquareEntity = m_ActiveScene->CreateEntity("Square");
+		m_SquareEntity = m_ActiveScene->CreateEntity("Green Square");
 		//给square添加SpriteRendererComponent
 		m_SquareEntity.AddComponent<SpriteRendererComponent>(glm::vec4{ 0.0f, 1.0f, 0.0f, 1.0f });
 		m_SquareEntity.GetComponent<TransformComponent>().Transform[3] = { -0.3f,0.2f,1.0f,1.0f };
@@ -35,11 +35,11 @@ namespace ShawEngine {
 		redSquare.AddComponent<SpriteRendererComponent>(glm::vec4{ 1.0f, 0.0f, 0.0f, 1.0f });
 		redSquare.GetComponent<TransformComponent>().Transform[3] = { 0.2f,-0.3f,0.0f,1.0f };
 
-		m_CameraEntity = m_ActiveScene->CreateEntity("Camera Entity");
+		m_CameraEntity = m_ActiveScene->CreateEntity("Camera A");
 		m_CameraEntity.GetComponent<TransformComponent>().Transform[3] = { 0.0f,0.0f,5.0f,1.0f };
 		m_CameraEntity.AddComponent<CameraComponent>();
 		
-		m_SecondCamera = m_ActiveScene->CreateEntity("Clip-Space Entity");
+		m_SecondCamera = m_ActiveScene->CreateEntity("Camera B");
 		m_SecondCamera.GetComponent<TransformComponent>().Transform[3] = { 0.0f,0.0f,5.0f,1.0f };
 		auto& cc = m_SecondCamera.AddComponent<CameraComponent>(); 
 		
@@ -206,36 +206,11 @@ namespace ShawEngine {
 			ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
 			ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
 			
-			if (m_SquareEntity)
-			{
-				//ImGui::Separator();
-				auto& tag = m_SquareEntity.GetComponent<TagComponent>().Tag;
-				ImGui::Text("%s", tag.c_str());
-				auto& squareColor = m_SquareEntity.GetComponent<SpriteRendererComponent>().Color;
-				ImGui::ColorEdit4("Square Color", glm::value_ptr(squareColor));
-				auto& squarePosition = m_SquareEntity.GetComponent<TransformComponent>().Transform[3];
-				ImGui::DragFloat3("Square Transform", glm::value_ptr(squarePosition), 0.01f);
-				//std::cout << "x:"<<squarePosition.x <<"  y:"<<squarePosition.y<<"  z:"<<squarePosition.z<< "\n";
-				//ImGui::Separator();
-			}	
-
-			auto& tag = m_CameraEntity.GetComponent<TagComponent>().Tag;
-			ImGui::Text("%s", tag.c_str());
-			auto& cameraPosition = m_CameraEntity.GetComponent<TransformComponent>().Transform[3];
-			ImGui::DragFloat3("Camera Transform", glm::value_ptr(cameraPosition), 0.01f);
-			//std::cout << "x:" << cameraPosition.x << "  y:" << cameraPosition.y << "  z:" << cameraPosition.z << "\n";
 			//切换主摄像机
 			if (ImGui::Checkbox("Camera A", &m_PrimaryCamera))
 			{
 				m_CameraEntity.GetComponent<CameraComponent>().Primary = m_PrimaryCamera;
 				m_SecondCamera.GetComponent<CameraComponent>().Primary = !m_PrimaryCamera;
-			}
-
-			{
-				auto& camera = m_SecondCamera.GetComponent<CameraComponent>().Camera;
-				float orthoSize = camera.GetOrthographicSize();
-				if (ImGui::DragFloat("Second Camera visual field", &orthoSize, 0.1f, 0, 100.0f))
-					camera.SetOrthographicSize(orthoSize);
 			}
 			ImGui::End();
 

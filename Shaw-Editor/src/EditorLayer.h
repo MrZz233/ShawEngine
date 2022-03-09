@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Engine.h"
+#include "Panels/SceneHierarchyPanel.h"
 
 namespace ShawEngine {
 
@@ -40,6 +41,9 @@ namespace ShawEngine {
 		uint32_t fps = 0;
 
 		bool m_ViewportFocused = false, m_ViewportHovered = false;
+
+		// Panels
+		SceneHierarchyPanel m_SceneHierarchyPanel;
 	};
 
 }

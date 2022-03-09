@@ -4801,17 +4801,18 @@ bool ImGui::IsMouseClicked(int button, bool repeat)
     ImGuiContext& g = *GImGui;
     IM_ASSERT(button >= 0 && button < IM_ARRAYSIZE(g.IO.MouseDown));
     const float t = g.IO.MouseDownDuration[button];
-    if (t == 0.0f)
+    if (t == 0.0f) {
         return true;
-
+    }
+  
     if (repeat && t > g.IO.KeyRepeatDelay)
     {
         // FIXME: 2019/05/03: Our old repeat code was wrong here and led to doubling the repeat rate, which made it an ok rate for repeat on mouse hold.
         int amount = CalcTypematicPressedRepeatAmount(t, t - g.IO.DeltaTime, g.IO.KeyRepeatDelay, g.IO.KeyRepeatRate * 0.5f);
-        if (amount > 0)
+        if (amount > 0) {
             return true;
+        }       
     }
-
     return false;
 }
 

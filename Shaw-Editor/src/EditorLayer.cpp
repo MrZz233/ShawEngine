@@ -29,26 +29,36 @@ namespace ShawEngine {
 		m_SquareEntity = m_ActiveScene->CreateEntity("Square");
 		//给square添加SpriteRendererComponent
 		m_SquareEntity.AddComponent<SpriteRendererComponent>(glm::vec4{ 0.0f, 1.0f, 0.0f, 1.0f });
+		m_SquareEntity.GetComponent<TransformComponent>().Transform[3] = { -0.3f,0.2f,1.0f,1.0f };
+
+		auto redSquare = m_ActiveScene->CreateEntity("Red Square");
+		redSquare.AddComponent<SpriteRendererComponent>(glm::vec4{ 1.0f, 0.0f, 0.0f, 1.0f });
+		redSquare.GetComponent<TransformComponent>().Transform[3] = { 0.2f,-0.3f,0.0f,1.0f };
 
 		m_CameraEntity = m_ActiveScene->CreateEntity("Camera Entity");
+		m_CameraEntity.GetComponent<TransformComponent>().Transform[3] = { 0.0f,0.0f,5.0f,1.0f };
 		m_CameraEntity.AddComponent<CameraComponent>();
-
+		
 		m_SecondCamera = m_ActiveScene->CreateEntity("Clip-Space Entity");
+		m_SecondCamera.GetComponent<TransformComponent>().Transform[3] = { 0.0f,0.0f,5.0f,1.0f };
 		auto& cc = m_SecondCamera.AddComponent<CameraComponent>(); 
+		
 		cc.Primary = false;
 
 		class CameraController : public ScriptableEntity
 		{
 		public:
-			void OnCreate()
+			virtual void OnCreate() override
+			{
+				auto& transform = GetComponent<TransformComponent>().Transform;
+				//transform[3][0] = rand() % 10 - 5.0f;
+			}
+
+			virtual void OnDestroy() override
 			{
 			}
 
-			void OnDestroy()
-			{
-			}
-
-			void OnUpdate(Timestep ts)
+			virtual void OnUpdate(Timestep ts) override
 			{
 				auto& transform = GetComponent<TransformComponent>().Transform;
 				float speed = 5.0f;
@@ -65,7 +75,8 @@ namespace ShawEngine {
 		};
 		//Bind<CameraController>() 指定了该nsc组件中的Create、Destroy、Update等
 		m_CameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
-
+		m_SecondCamera.AddComponent<NativeScriptComponent>().Bind<CameraController>();
+		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 	}
 
 	void EditorLayer::OnDetach()
@@ -183,6 +194,8 @@ namespace ShawEngine {
 
 				ImGui::EndMenuBar();
 			}
+
+			m_SceneHierarchyPanel.OnImGuiRender();
 
 			ImGui::Begin("Information:");
 			auto stats = Renderer2D::GetStats();

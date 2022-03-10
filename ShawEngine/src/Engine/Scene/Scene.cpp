@@ -63,7 +63,7 @@ namespace ShawEngine {
 				if (camera.Primary)
 				{
 					mainCamera = &camera.Camera;
-					cameraTransform = transform.GetTransform();
+					cameraTransform = transform.GetCamTransform();
 					break;
 				}
 			}

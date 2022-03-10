@@ -12,9 +12,10 @@ namespace ShawEngine {
 	public:
 		virtual void OnCreate() override
 		{
-			auto& translation = GetComponent<TransformComponent>().Translation;
+			auto& transform = GetComponent<TransformComponent>();
 			//transform[3][0] = rand() % 10 - 5.0f;
-			translation.z = 5.0f;
+			transform.Translation.z = 5.0f;
+			transform.Rotation.y = 90.0f;
 		}
 
 		virtual void OnDestroy() override
@@ -23,24 +24,46 @@ namespace ShawEngine {
 
 		virtual void OnUpdate(Timestep ts) override
 		{
-			auto& translation = GetComponent<TransformComponent>().Translation;
+			if (!GetComponent<CameraComponent>().Primary)
+				return;
+			auto& transform = GetComponent<TransformComponent>();
+			auto& translation = transform.Translation;
 			float speed = 2.0f;
 			float rot_speed = 0.1f;
 			if (EditorLayer::GetViewportFocus()) {
-				if (Input::IsKeyPressed(Key::A))
-					translation.x -= speed * ts;
-				if (Input::IsKeyPressed(Key::D))
-					translation.x += speed * ts;
-				if (Input::IsKeyPressed(Key::W))
-					translation.y += speed * ts;
-				if (Input::IsKeyPressed(Key::S))
-					translation.y -= speed * ts;
+				auto& rotation = transform.Rotation;
 				if (Input::IsMouseButtonPressed(Mouse::Button0)) {
-					auto& rotation = GetComponent<TransformComponent>().Rotation;
 					glm::vec2 mouse_pos_new = Input::GetMousePosition();
-					rotation.y -= rot_speed * glm::radians((mouse_pos_new - mouse_pos_last).x);
-					rotation.x -= rot_speed * glm::radians((mouse_pos_new - mouse_pos_last).y);
+					//相当于偏航角yaw
+					rotation.y -= rot_speed * (mouse_pos_new - mouse_pos_last).x;
+					//相当于仰俯角pitch
+					rotation.x -= rot_speed * (mouse_pos_new - mouse_pos_last).y;
+					if (rotation.x > 89.0f)
+						rotation.x = 89.0f;
+					if (rotation.x < -89.0f)
+						rotation.x = -89.0f;
 				}
+				float yaw = glm::radians(rotation.y);
+				if (Input::IsKeyPressed(Key::A)) {
+					translation.x -= speed * ts * glm::sin(yaw);
+					translation.z -= speed * ts * glm::cos(yaw);
+				}
+				if (Input::IsKeyPressed(Key::D)) {
+					translation.x += speed * ts * glm::sin(yaw);
+					translation.z += speed * ts * glm::cos(yaw);
+				}
+				if (Input::IsKeyPressed(Key::W)) {
+					translation.x += speed * ts * glm::cos(yaw);
+					translation.z -= speed * ts * glm::sin(yaw);
+				}
+				if (Input::IsKeyPressed(Key::S)) {
+					translation.x -= speed * ts * glm::cos(yaw);
+					translation.z += speed * ts * glm::sin(yaw);
+				}
+				if (Input::IsKeyPressed(Key::Space))
+					translation.y += speed * ts;
+				if (Input::IsKeyPressed(Key::LeftControl))
+					translation.y -= speed * ts;
 			}
 			mouse_pos_last = Input::GetMousePosition();
 			//std::cout << "mouse_pos: " << mouse_pos_last.x << mouse_pos_last.y << "\n";
@@ -74,11 +97,17 @@ namespace ShawEngine {
 		m_SquareEntity = m_ActiveScene->CreateEntity("Green Square");
 		//给square添加SpriteRendererComponent
 		m_SquareEntity.AddComponent<SpriteRendererComponent>(glm::vec4{ 0.0f, 1.0f, 0.0f, 1.0f }, Shape::Quad);
-		m_SquareEntity.GetComponent<TransformComponent>().Translation = { -0.3f,0.2f,-2.0f };
+		m_SquareEntity.GetComponent<TransformComponent>().Translation = { -0.3f,0.0f,-2.0f };
 
 		auto redSquare = m_ActiveScene->CreateEntity("Red Square");
 		redSquare.AddComponent<SpriteRendererComponent>(glm::vec4{ 1.0f, 0.0f, 0.0f, 1.0f }, Shape::Quad);
-		redSquare.GetComponent<TransformComponent>().Translation = { 0.2f,-0.3f,2.0f };
+		redSquare.GetComponent<TransformComponent>().Translation = { 0.2f,0.0f,2.0f };
+
+		auto _Plane = m_ActiveScene->CreateEntity("Plane");
+		_Plane.AddComponent<SpriteRendererComponent>(glm::vec4{ 0.8f, 0.8f, 0.8f, 1.0f }, Shape::Quad);
+		_Plane.GetComponent<TransformComponent>().Translation = { 0.0f,-0.5f,0.0f };
+		_Plane.GetComponent<TransformComponent>().Rotation = { 90.0f,0.0f,0.0f };
+		_Plane.GetComponent<TransformComponent>().Scale = { 10.0f,10.0f,10.0f };
 
 		m_CameraEntity = m_ActiveScene->CreateEntity("Camera A");
 		m_CameraEntity.AddComponent<CameraComponent>();
@@ -189,12 +218,15 @@ namespace ShawEngine {
 
 			// DockSpace
 			ImGuiIO& io = ImGui::GetIO();
+			ImGuiStyle& style = ImGui::GetStyle();
+			float minWinSizeX = style.WindowMinSize.x;
+			style.WindowMinSize.x = 256.0f;
 			if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
 			{
 				ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
 				ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
 			}
-
+			style.WindowMinSize.x = minWinSizeX;
 			if (ImGui::BeginMenuBar())
 			{
 				if (ImGui::BeginMenu("Option"))

@@ -17,6 +17,8 @@ namespace ShawEngine {
 		void OnUpdate(Timestep ts) override;
 		virtual void OnImGuiRender() override;
 		void OnEvent(Event& e) override;
+		static bool GetViewportFocus() { return m_ViewportFocused; };
+	
 	private:
 		ShawEngine::OrthographicCameraController m_CameraController;
 
@@ -40,10 +42,9 @@ namespace ShawEngine {
 		glm::vec4 m_SquareColor = { 0.2f, 0.3f, 0.8f, 1.0f };
 		uint32_t fps = 0;
 
-		bool m_ViewportFocused = false, m_ViewportHovered = false;
+		static bool m_ViewportFocused, m_ViewportHovered;
 
 		// Panels
 		SceneHierarchyPanel m_SceneHierarchyPanel;
 	};
-
 }

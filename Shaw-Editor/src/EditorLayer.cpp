@@ -7,6 +7,51 @@
 
 namespace ShawEngine {
 
+	class CameraController : public ScriptableEntity
+	{
+	public:
+		virtual void OnCreate() override
+		{
+			auto& translation = GetComponent<TransformComponent>().Translation;
+			//transform[3][0] = rand() % 10 - 5.0f;
+			translation.z = 5.0f;
+		}
+
+		virtual void OnDestroy() override
+		{
+		}
+
+		virtual void OnUpdate(Timestep ts) override
+		{
+			auto& translation = GetComponent<TransformComponent>().Translation;
+			float speed = 2.0f;
+			float rot_speed = 0.1f;
+			if (EditorLayer::GetViewportFocus()) {
+				if (Input::IsKeyPressed(Key::A))
+					translation.x -= speed * ts;
+				if (Input::IsKeyPressed(Key::D))
+					translation.x += speed * ts;
+				if (Input::IsKeyPressed(Key::W))
+					translation.y += speed * ts;
+				if (Input::IsKeyPressed(Key::S))
+					translation.y -= speed * ts;
+				if (Input::IsMouseButtonPressed(Mouse::Button0)) {
+					auto& rotation = GetComponent<TransformComponent>().Rotation;
+					glm::vec2 mouse_pos_new = Input::GetMousePosition();
+					rotation.y -= rot_speed * glm::radians((mouse_pos_new - mouse_pos_last).x);
+					rotation.x -= rot_speed * glm::radians((mouse_pos_new - mouse_pos_last).y);
+				}
+			}
+			mouse_pos_last = Input::GetMousePosition();
+			//std::cout << "mouse_pos: " << mouse_pos_last.x << mouse_pos_last.y << "\n";
+		}
+	private:
+		glm::vec2 mouse_pos_last{};
+	};
+
+	bool EditorLayer::m_ViewportFocused = false;
+	bool EditorLayer::m_ViewportHovered = false;
+
 	EditorLayer::EditorLayer()
 		: Layer("EditorLayer"), m_CameraController(1280.0f / 720.0f), m_SquareColor({ 0.2f, 0.3f, 0.8f, 1.0f })
 	{
@@ -28,51 +73,21 @@ namespace ShawEngine {
 		//创建一个square实体
 		m_SquareEntity = m_ActiveScene->CreateEntity("Green Square");
 		//给square添加SpriteRendererComponent
-		m_SquareEntity.AddComponent<SpriteRendererComponent>(glm::vec4{ 0.0f, 1.0f, 0.0f, 1.0f });
-		m_SquareEntity.GetComponent<TransformComponent>().Transform[3] = { -0.3f,0.2f,1.0f,1.0f };
+		m_SquareEntity.AddComponent<SpriteRendererComponent>(glm::vec4{ 0.0f, 1.0f, 0.0f, 1.0f }, Shape::Quad);
+		m_SquareEntity.GetComponent<TransformComponent>().Translation = { -0.3f,0.2f,-2.0f };
 
 		auto redSquare = m_ActiveScene->CreateEntity("Red Square");
-		redSquare.AddComponent<SpriteRendererComponent>(glm::vec4{ 1.0f, 0.0f, 0.0f, 1.0f });
-		redSquare.GetComponent<TransformComponent>().Transform[3] = { 0.2f,-0.3f,0.0f,1.0f };
+		redSquare.AddComponent<SpriteRendererComponent>(glm::vec4{ 1.0f, 0.0f, 0.0f, 1.0f }, Shape::Quad);
+		redSquare.GetComponent<TransformComponent>().Translation = { 0.2f,-0.3f,2.0f };
 
 		m_CameraEntity = m_ActiveScene->CreateEntity("Camera A");
-		m_CameraEntity.GetComponent<TransformComponent>().Transform[3] = { 0.0f,0.0f,5.0f,1.0f };
 		m_CameraEntity.AddComponent<CameraComponent>();
 		
 		m_SecondCamera = m_ActiveScene->CreateEntity("Camera B");
-		m_SecondCamera.GetComponent<TransformComponent>().Transform[3] = { 0.0f,0.0f,5.0f,1.0f };
 		auto& cc = m_SecondCamera.AddComponent<CameraComponent>(); 
 		
 		cc.Primary = false;
 
-		class CameraController : public ScriptableEntity
-		{
-		public:
-			virtual void OnCreate() override
-			{
-				auto& transform = GetComponent<TransformComponent>().Transform;
-				//transform[3][0] = rand() % 10 - 5.0f;
-			}
-
-			virtual void OnDestroy() override
-			{
-			}
-
-			virtual void OnUpdate(Timestep ts) override
-			{
-				auto& transform = GetComponent<TransformComponent>().Transform;
-				float speed = 2.0f;
-
-				if (Input::IsKeyPressed(Key::A))
-					transform[3][0] -= speed * ts;
-				if (Input::IsKeyPressed(Key::D))
-					transform[3][0] += speed * ts;
-				if (Input::IsKeyPressed(Key::W))
-					transform[3][1] += speed * ts;
-				if (Input::IsKeyPressed(Key::S))
-					transform[3][1] -= speed * ts;
-			}
-		};
 		//Bind<CameraController>() 指定了该nsc组件中的Create、Destroy、Update等
 		m_CameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
 		m_SecondCamera.AddComponent<NativeScriptComponent>().Bind<CameraController>();
@@ -223,6 +238,7 @@ namespace ShawEngine {
 			bool _block = !m_ViewportFocused || !m_ViewportHovered;
 			Application::Get().GetImGuiLayer()->BlockEvents(_block);
 			ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
+			m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
 			uint64_t TextureID = m_Framebuffer->GetColorAttachmentRendererID();
 			ImGui::Image(reinterpret_cast<void*>(TextureID), ImVec2{ viewportPanelSize.x, viewportPanelSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 			ImGui::End();

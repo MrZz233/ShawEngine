@@ -79,7 +79,7 @@ namespace ShawEngine {
 		{
 			if (m_Event.GetEventType() == T::GetStaticType())	//属于该事件
 			{
-				m_Event.Handled = func(static_cast<T&>(m_Event));	//执行该事件
+				m_Event.Handled |= func(static_cast<T&>(m_Event));	//执行该事件
 				return true;
 			}
 			return false;

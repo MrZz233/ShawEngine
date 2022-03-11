@@ -29,12 +29,14 @@ IncludeDir["ImGui"] = "%{wks.location}/ShawEngine/vendor/imgui"
 IncludeDir["glm"] = "%{wks.location}/ShawEngine/vendor/glm"
 IncludeDir["stb_image"] = "%{wks.location}/ShawEngine/vendor/stb_image"
 IncludeDir["entt"] = "%{wks.location}/ShawEngine/vendor/entt/include"
+IncludeDir["yaml_cpp"] = "%{wks.location}/ShawEngine/vendor/yaml-cpp/include"
 
 group "Dependencies"
 	include "vendor/premake"
 	include "ShawEngine/vendor/GLFW"	--将GLFW中的premake复制过来
 	include "ShawEngine/vendor/Glad"
 	include "ShawEngine/vendor/imgui"
+	include "ShawEngine/vendor/yaml-cpp"
 group ""
 
 include "ShawEngine"

@@ -4,7 +4,7 @@
 #include <imgui/imgui.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-
+#include "Engine/Scene/SceneSerializer.h"
 namespace ShawEngine {
 
 	class CameraController : public ScriptableEntity
@@ -15,7 +15,7 @@ namespace ShawEngine {
 			auto& transform = GetComponent<TransformComponent>();
 			//transform[3][0] = rand() % 10 - 5.0f;
 			transform.Translation.z = 5.0f;
-			transform.Rotation.y = 90.0f;
+			transform.Rotation.y = 0.0f;
 		}
 
 		virtual void OnDestroy() override
@@ -45,20 +45,20 @@ namespace ShawEngine {
 				}
 				float yaw = glm::radians(rotation.y);
 				if (Input::IsKeyPressed(Key::A)) {
-					translation.x -= speed * ts * glm::sin(yaw);
-					translation.z -= speed * ts * glm::cos(yaw);
+					translation.x -= speed * ts * glm::cos(yaw);
+					translation.z += speed * ts * glm::sin(yaw);
 				}
 				if (Input::IsKeyPressed(Key::D)) {
-					translation.x += speed * ts * glm::sin(yaw);
-					translation.z += speed * ts * glm::cos(yaw);
-				}
-				if (Input::IsKeyPressed(Key::W)) {
 					translation.x += speed * ts * glm::cos(yaw);
 					translation.z -= speed * ts * glm::sin(yaw);
 				}
+				if (Input::IsKeyPressed(Key::W)) {
+					translation.x -= speed * ts * glm::sin(yaw);
+					translation.z -= speed * ts * glm::cos(yaw);
+				}
 				if (Input::IsKeyPressed(Key::S)) {
-					translation.x -= speed * ts * glm::cos(yaw);
-					translation.z += speed * ts * glm::sin(yaw);
+					translation.x += speed * ts * glm::sin(yaw);
+					translation.z += speed * ts * glm::cos(yaw);
 				}
 				if (Input::IsKeyPressed(Key::Space))
 					translation.y += speed * ts;
@@ -92,7 +92,8 @@ namespace ShawEngine {
 		m_Framebuffer = Framebuffer::Create(fbSpec);
 
 		//创建一个场景
-		m_ActiveScene = CreateRef<Scene>();
+		m_ActiveScene = CreateRef<Scene>();		
+#if 0
 		//创建一个square实体
 		m_SquareEntity = m_ActiveScene->CreateEntity("Green Square");
 		//给square添加SpriteRendererComponent
@@ -120,6 +121,10 @@ namespace ShawEngine {
 		//Bind<CameraController>() 指定了该nsc组件中的Create、Destroy、Update等
 		m_CameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
 		m_SecondCamera.AddComponent<NativeScriptComponent>().Bind<CameraController>();
+#endif
+
+
+
 		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 	}
 
@@ -234,6 +239,17 @@ namespace ShawEngine {
 					// Disabling fullscreen would allow the window to be moved to the front of other windows, 
 					// which we can't undo at the moment without finer window depth/z control.
 					//ImGui::MenuItem("Fullscreen", NULL, &opt_fullscreen_persistant);
+					if (ImGui::MenuItem("Serialize"))
+					{
+						SceneSerializer serializer(m_ActiveScene);
+						serializer.Serialize("assets/scenes/Example.sc");
+					}
+
+					if (ImGui::MenuItem("Deserialize"))
+					{
+						SceneSerializer serializer(m_ActiveScene);
+						serializer.Deserialize("assets/scenes/Example.sc");
+					}
 
 					if (ImGui::MenuItem("Exit")) Application::Get().Close();
 					ImGui::EndMenu();

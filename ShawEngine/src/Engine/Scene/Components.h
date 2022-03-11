@@ -45,9 +45,12 @@ namespace ShawEngine {
 			glm::vec3 front;
 			float yaw = Rotation.y;
 			float pitch = Rotation.x;
-			front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+			//front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+			//front.y = sin(glm::radians(pitch));
+			//front.z = -sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+			front.x = -cos(glm::radians(pitch)) * sin(glm::radians(yaw));
 			front.y = sin(glm::radians(pitch));
-			front.z = -sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+			front.z = -cos(glm::radians(pitch)) * cos(glm::radians(yaw));
 
 			glm::vec3 Front = -glm::normalize(front);
 			// also re-calculate the Right and Up vector

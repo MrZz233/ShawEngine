@@ -1,8 +1,13 @@
 #pragma once
-#include "Engine/Scene/SceneCamera.h"
-#include "Engine/Scene/ScriptableEntity.h"
+
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/quaternion.hpp>
+
+#include "Engine/Scene/SceneCamera.h"
+#include "Engine/Scene/ScriptableEntity.h"
 
 namespace ShawEngine {
 
@@ -29,36 +34,8 @@ namespace ShawEngine {
 			: Translation(translation) {}
 
 		glm::mat4 GetTransform() const
-		{
-			
-			glm::mat4 rotation = glm::rotate(glm::mat4(1.0f), glm::radians(Rotation.x), { 1, 0, 0 })
-				*glm::rotate(glm::mat4(1.0f), glm::radians(Rotation.y), { 0, 1, 0 })
-				*glm::rotate(glm::mat4(1.0f), glm::radians(Rotation.z), { 0, 0, 1 });
-
-			return glm::translate(glm::mat4(1.0f), Translation)
-				* glm::mat4(rotation)
-				* glm::scale(glm::mat4(1.0f), Scale);
-		}
-
-		glm::mat4 GetCamTransform() const
-		{
-			glm::vec3 front;
-			float yaw = Rotation.y;
-			float pitch = Rotation.x;
-			//front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-			//front.y = sin(glm::radians(pitch));
-			//front.z = -sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-			front.x = -cos(glm::radians(pitch)) * sin(glm::radians(yaw));
-			front.y = sin(glm::radians(pitch));
-			front.z = -cos(glm::radians(pitch)) * cos(glm::radians(yaw));
-
-			glm::vec3 Front = -glm::normalize(front);
-			// also re-calculate the Right and Up vector
-			glm::vec3 Right = glm::normalize(glm::cross({ 0,1,0 },Front));  // normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
-			glm::vec3 Up = glm::normalize(glm::cross(Front,Right));
-
-			glm::mat3 rotation;
-			rotation[0] = Right; rotation[1] = Up; rotation[2] = Front;
+		{		
+			glm::mat4 rotation = glm::toMat4(glm::quat(Rotation));
 
 			return glm::translate(glm::mat4(1.0f), Translation)
 				* glm::mat4(rotation)

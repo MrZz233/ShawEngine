@@ -5,6 +5,12 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include "Engine/Scene/SceneSerializer.h"
+#include "Engine/Utils/PlatformUtils.h"
+
+#include "ImGuizmo.h"
+
+#include "Engine/Math/Math.h"
+
 namespace ShawEngine {
 
 	class CameraController : public ScriptableEntity
@@ -239,17 +245,14 @@ namespace ShawEngine {
 					// Disabling fullscreen would allow the window to be moved to the front of other windows, 
 					// which we can't undo at the moment without finer window depth/z control.
 					//ImGui::MenuItem("Fullscreen", NULL, &opt_fullscreen_persistant);
-					if (ImGui::MenuItem("Serialize"))
-					{
-						SceneSerializer serializer(m_ActiveScene);
-						serializer.Serialize("assets/scenes/Example.sc");
-					}
+					if (ImGui::MenuItem("New", "Ctrl+N"))
+						NewScene();
 
-					if (ImGui::MenuItem("Deserialize"))
-					{
-						SceneSerializer serializer(m_ActiveScene);
-						serializer.Deserialize("assets/scenes/Example.sc");
-					}
+					if (ImGui::MenuItem("Open...", "Ctrl+O"))
+						OpenScene();
+
+					if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S"))
+						SaveSceneAs();
 
 					if (ImGui::MenuItem("Exit")) Application::Get().Close();
 					ImGui::EndMenu();
@@ -283,18 +286,63 @@ namespace ShawEngine {
 			//BlockEvents为true   ImGui处理事件，
 			//没有聚焦  或者  没有悬浮  ImGui才处理事件
 			//等价于   聚焦且悬浮   ImGui不处理事件  
-			bool _block = !m_ViewportFocused || !m_ViewportHovered;
+			bool _block = !m_ViewportFocused && !m_ViewportHovered;
 			Application::Get().GetImGuiLayer()->BlockEvents(_block);
 			ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
 			m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
 			uint64_t TextureID = m_Framebuffer->GetColorAttachmentRendererID();
 			ImGui::Image(reinterpret_cast<void*>(TextureID), ImVec2{ viewportPanelSize.x, viewportPanelSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+			
+			Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
+			if (selectedEntity && m_GizmoType != -1)
+			{
+				ImGuizmo::SetOrthographic(false);
+				ImGuizmo::SetDrawlist();
+
+				float windowWidth = (float)ImGui::GetWindowWidth();
+				float windowHeight = (float)ImGui::GetWindowHeight();
+				ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, windowWidth, windowHeight);
+
+				// Camera
+				auto cameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
+				const auto& camera = cameraEntity.GetComponent<CameraComponent>().Camera;
+				const glm::mat4& cameraProjection = camera.GetProjection();
+				glm::mat4 cameraView = glm::inverse(cameraEntity.GetComponent<TransformComponent>().GetTransform());
+
+				// Entity transform
+				auto& tc = selectedEntity.GetComponent<TransformComponent>();
+				glm::mat4 transform = tc.GetTransform();
+
+				// Snapping
+				bool snap = Input::IsKeyPressed(Key::LeftControl);
+				float snapValue = 0.5f; // Snap to 0.5m for translation/scale
+				// Snap to 45 degrees for rotation
+				if (m_GizmoType == ImGuizmo::OPERATION::ROTATE)
+					snapValue = 45.0f;
+
+				float snapValues[3] = { snapValue, snapValue, snapValue };
+
+				ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection),
+					(ImGuizmo::OPERATION)m_GizmoType, ImGuizmo::LOCAL, glm::value_ptr(transform),
+					nullptr, snap ? snapValues : nullptr);
+
+				if (ImGuizmo::IsUsing())
+				{
+					glm::vec3 translation, rotation, scale;
+					Math::DecomposeTransform(transform, translation, rotation, scale);
+					glm::vec3 deltaRotation = rotation - tc.Rotation;
+					tc.Translation = translation;
+					tc.Rotation += deltaRotation;
+					tc.Scale = scale;
+				}
+			}
 			ImGui::End();
 
 			ImGui::Begin("DepthSpace");
 			ImVec2 viewportPanelSize2 = ImGui::GetContentRegionAvail();
 			uint64_t depthTextureID = m_Framebuffer->GetDepthAttachmentRendererID();
 			ImGui::Image(reinterpret_cast<void*>(depthTextureID), ImVec2{ viewportPanelSize2.x, viewportPanelSize2.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+			
 			ImGui::End();
 
 			ImGui::End();
@@ -304,6 +352,86 @@ namespace ShawEngine {
 	void EditorLayer::OnEvent(Event& e)
 	{
 		m_CameraController.OnEvent(e);
+		EventDispatcher dispatcher(e);
+		dispatcher.Dispatch<KeyPressedEvent>(SE_BIND_EVENT_FN(EditorLayer::OnKeyPressed));
+	}
+
+	bool EditorLayer::OnKeyPressed(KeyPressedEvent& e)
+	{
+		// Shortcuts
+		if (e.GetRepeatCount() > 0)
+			return false;
+
+		bool control = Input::IsKeyPressed(Key::LeftControl) || Input::IsKeyPressed(Key::RightControl);
+		bool shift = Input::IsKeyPressed(Key::LeftShift) || Input::IsKeyPressed(Key::RightShift);
+		switch (e.GetKeyCode())
+		{
+			case Key::N:
+			{
+				if (control)
+					NewScene();
+
+				break;
+			}
+			case Key::O:
+			{
+				if (control)
+					OpenScene();
+
+				break;
+			}
+			case Key::S:
+			{
+				if (control && shift)
+					SaveSceneAs();
+
+				break;
+			}
+			// Gizmos
+			case Key::Q:
+				m_GizmoType = -1;
+				break;
+			case Key::W:
+				m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
+				break;
+			case Key::E:
+				m_GizmoType = ImGuizmo::OPERATION::ROTATE;
+				break;
+			case Key::R:
+				m_GizmoType = ImGuizmo::OPERATION::SCALE;
+				break;
+		}
+	}
+
+	void EditorLayer::NewScene()
+	{
+		m_ActiveScene = CreateRef<Scene>();
+		m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+	}
+
+	void EditorLayer::OpenScene()
+	{
+		std::optional<std::string> filepath = FileDialogs::OpenFile("Scene (*.sc)\0*.sc\0");
+		if (filepath)
+		{
+			m_ActiveScene = CreateRef<Scene>();
+			m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+			m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+
+			SceneSerializer serializer(m_ActiveScene);
+			serializer.Deserialize(*filepath);
+		}
+	}
+
+	void EditorLayer::SaveSceneAs()
+	{
+		std::optional<std::string> filepath = FileDialogs::SaveFile("Scene (*.sc)\0*.sc\0");
+		if (filepath)
+		{
+			SceneSerializer serializer(m_ActiveScene);
+			serializer.Serialize(*filepath);
+		}
 	}
 
 }

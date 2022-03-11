@@ -19,7 +19,8 @@ project "Shaw-Editor"
 		"%{wks.location}/ShawEngine/src",
 		"%{wks.location}/ShawEngine/vendor",
 		"%{IncludeDir.glm}",
-		"%{IncludeDir.entt}"
+		"%{IncludeDir.entt}",
+		"%{IncludeDir.ImGuizmo}"
 	}
 
 	links

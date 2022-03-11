@@ -20,6 +20,12 @@ namespace ShawEngine {
 		static bool GetViewportFocus() { return m_ViewportFocused; };
 	
 	private:
+		bool OnKeyPressed(KeyPressedEvent& e);
+
+		void NewScene();
+		void OpenScene();
+		void SaveSceneAs();
+
 		ShawEngine::OrthographicCameraController m_CameraController;
 
 		// Temp
@@ -43,7 +49,7 @@ namespace ShawEngine {
 		uint32_t fps = 0;
 
 		static bool m_ViewportFocused, m_ViewportHovered;
-
+		int m_GizmoType = 1;
 		// Panels
 		SceneHierarchyPanel m_SceneHierarchyPanel;
 	};

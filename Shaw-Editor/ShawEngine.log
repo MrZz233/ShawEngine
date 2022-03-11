@@ -1,13 +1,12 @@
-[14:12:56] [info] ShawEngine: Creating window ShawEngine Editor (1600, 900)
-[14:12:56] [info] ShawEngine: Initializing GLFW
-[14:12:57] [info] ShawEngine: OpenGL Info:
-[14:12:57] [info] ShawEngine:   Vendor: NVIDIA Corporation
-[14:12:57] [info] ShawEngine:   Renderer: NVIDIA GeForce GTX 1050 Ti/PCIe/SSE2
-[14:12:57] [info] ShawEngine:   Version: 4.6.0 NVIDIA 497.29
-[14:13:00] [trace] ShawEngine: Deserializing scene 'Untitled'
-[14:13:00] [trace] ShawEngine: Deserialized entity with ID = 12837192831273, name = Camera B
-[14:13:00] [trace] ShawEngine: Deserialized entity with ID = 12837192831273, name = Camera A
-[14:13:00] [trace] ShawEngine: Deserialized entity with ID = 12837192831273, name = Plane
-[14:13:00] [trace] ShawEngine: Deserialized entity with ID = 12837192831273, name = Red Square
-[14:13:00] [trace] ShawEngine: Deserialized entity with ID = 12837192831273, name = Green Square
-[14:13:08] [info] ShawEngine: Terminating GLFW
+[23:15:17] [info] ShawEngine: Creating window ShawEngine Editor (1600, 900)
+[23:15:17] [info] ShawEngine: Initializing GLFW
+[23:15:18] [info] ShawEngine: OpenGL Info:
+[23:15:18] [info] ShawEngine:   Vendor: NVIDIA Corporation
+[23:15:18] [info] ShawEngine:   Renderer: NVIDIA GeForce GTX 1050 Ti/PCIe/SSE2
+[23:15:18] [info] ShawEngine:   Version: 4.6.0 NVIDIA 497.29
+[23:15:24] [trace] ShawEngine: Deserializing scene 'Untitled'
+[23:15:24] [trace] ShawEngine: Deserialized entity with ID = 12837192831273, name = Left
+[23:15:24] [trace] ShawEngine: Deserialized entity with ID = 12837192831273, name = Right
+[23:15:24] [trace] ShawEngine: Deserialized entity with ID = 12837192831273, name = Camera
+[23:15:24] [trace] ShawEngine: Deserialized entity with ID = 12837192831273, name = Top
+[23:16:08] [info] ShawEngine: Terminating GLFW

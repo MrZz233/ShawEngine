@@ -32,7 +32,7 @@ namespace ShawEngine {
 		void Run();
 		bool OnClosed(WindowCloseEvent&);
 		bool OnWindowResize(WindowResizeEvent& e);
-		std::unique_ptr<Window> m_Windows;
+		Scope<Window> m_Windows;
 		ImGuiLayer* m_ImGuiLayer;
 		bool m_Running = true;
 		bool m_Minimized = false;

@@ -2,6 +2,7 @@
 
 #include "entt.hpp"
 #include "Engine/Core/Timestep.h"
+#include "Engine/Renderer/EditorCamera.h"
 
 namespace ShawEngine {
 
@@ -15,6 +16,8 @@ namespace ShawEngine {
 
 		Entity CreateEntity(const std::string& name = std::string());
 		void DestroyEntity(Entity entity);
+		void OnUpdateRuntime(Timestep ts);
+		void OnUpdateEditor(Timestep ts, EditorCamera& camera);
 		void OnUpdate(Timestep ts);
 		void OnViewportResize(uint32_t width, uint32_t height);
 		Entity GetPrimaryCameraEntity();

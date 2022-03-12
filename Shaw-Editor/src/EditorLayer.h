@@ -2,6 +2,7 @@
 
 #include "Engine.h"
 #include "Panels/SceneHierarchyPanel.h"
+#include "Engine/Renderer/EditorCamera.h"
 
 namespace ShawEngine {
 
@@ -40,7 +41,7 @@ namespace ShawEngine {
 		Entity m_SecondCamera;
 
 		bool m_PrimaryCamera = true;
-
+		EditorCamera m_EditorCamera;
 		Ref<Texture2D> m_CheckerboardTexture;
 		Ref<Texture2D> m_LelouchTexture;
 		glm::vec2 m_ViewportSize = { 0.0f, 0.0f };
@@ -49,7 +50,7 @@ namespace ShawEngine {
 		uint32_t fps = 0;
 
 		static bool m_ViewportFocused, m_ViewportHovered;
-		int m_GizmoType = 1;
+		int m_GizmoType = -1;
 		// Panels
 		SceneHierarchyPanel m_SceneHierarchyPanel;
 	};

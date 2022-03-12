@@ -3,6 +3,7 @@
 #include "Engine/Renderer/OrthographicCamera.h"
 #include "Engine/Renderer/Texture.h"
 #include "Engine/Renderer/Camera.h"
+#include "Engine/Renderer/EditorCamera.h"
 
 namespace ShawEngine {
 
@@ -13,6 +14,7 @@ namespace ShawEngine {
 		static void Shutdown();
 
 		static void BeginScene(const Camera& camera, const glm::mat4& transform);
+		static void BeginScene(const EditorCamera& camera);
 		static void BeginScene(const OrthographicCamera& camera); // TODO: Remove
 
 		static void EndScene();

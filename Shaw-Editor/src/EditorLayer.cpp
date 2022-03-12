@@ -50,25 +50,25 @@ namespace ShawEngine {
 						rotation.x = -89.0f;
 				}
 				float yaw = glm::radians(rotation.y);
-				if (Input::IsKeyPressed(Key::A)) {
+				if (Input::IsKeyPressed(Key::Left)) {
 					translation.x -= speed * ts * glm::cos(yaw);
 					translation.z += speed * ts * glm::sin(yaw);
 				}
-				if (Input::IsKeyPressed(Key::D)) {
+				if (Input::IsKeyPressed(Key::Right)) {
 					translation.x += speed * ts * glm::cos(yaw);
 					translation.z -= speed * ts * glm::sin(yaw);
 				}
-				if (Input::IsKeyPressed(Key::W)) {
+				if (Input::IsKeyPressed(Key::Up)) {
 					translation.x -= speed * ts * glm::sin(yaw);
 					translation.z -= speed * ts * glm::cos(yaw);
 				}
-				if (Input::IsKeyPressed(Key::S)) {
+				if (Input::IsKeyPressed(Key::Down)) {
 					translation.x += speed * ts * glm::sin(yaw);
 					translation.z += speed * ts * glm::cos(yaw);
 				}
 				if (Input::IsKeyPressed(Key::Space))
 					translation.y += speed * ts;
-				if (Input::IsKeyPressed(Key::LeftControl))
+				if (Input::IsKeyPressed(Key::RightControl))
 					translation.y -= speed * ts;
 			}
 			mouse_pos_last = Input::GetMousePosition();
@@ -95,10 +95,13 @@ namespace ShawEngine {
 		FramebufferSpecification fbSpec;
 		fbSpec.Width = 1280;
 		fbSpec.Height = 720;
+		fbSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::Depth };
 		m_Framebuffer = Framebuffer::Create(fbSpec);
 
 		//创建一个场景
-		m_ActiveScene = CreateRef<Scene>();		
+		m_ActiveScene = CreateRef<Scene>();
+
+		m_EditorCamera = EditorCamera(30.0f, 1.778f, 1.0f, 1000.0f);
 #if 0
 		//创建一个square实体
 		m_SquareEntity = m_ActiveScene->CreateEntity("Green Square");
@@ -151,6 +154,7 @@ namespace ShawEngine {
 		{
 			m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 			m_CameraController.OnResize(m_ViewportSize.x, m_ViewportSize.y);
+			m_EditorCamera.SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
 			m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 			std::cout << "Size Change" << "\n";
 		}
@@ -158,6 +162,7 @@ namespace ShawEngine {
 		// Update
 		//if (m_ViewportFocused)
 			//m_CameraController.OnUpdate(ts);
+		m_EditorCamera.OnUpdate(ts);
 
 		// Render初始化
 		Renderer2D::ResetStats();
@@ -167,7 +172,7 @@ namespace ShawEngine {
 		RenderCommand::Clear();
 		//Update场景
 		//Renderer2D::BeginScene(m_CameraController.GetCamera());
-		m_ActiveScene->OnUpdate(ts);
+		m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
 		//Renderer2D::EndScene();
 		m_Framebuffer->Unbind();
 
@@ -304,11 +309,13 @@ namespace ShawEngine {
 				ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, windowWidth, windowHeight);
 
 				// Camera
-				auto cameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
-				const auto& camera = cameraEntity.GetComponent<CameraComponent>().Camera;
-				const glm::mat4& cameraProjection = camera.GetProjection();
-				glm::mat4 cameraView = glm::inverse(cameraEntity.GetComponent<TransformComponent>().GetTransform());
+				//auto cameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
+				//const auto& camera = cameraEntity.GetComponent<CameraComponent>().Camera;
+				//const glm::mat4& cameraProjection = camera.GetProjection();
+				//glm::mat4 cameraView = glm::inverse(cameraEntity.GetComponent<TransformComponent>().GetTransform());
 
+				const glm::mat4& cameraProjection = m_EditorCamera.GetProjection();
+				glm::mat4 cameraView = m_EditorCamera.GetViewMatrix();
 				// Entity transform
 				auto& tc = selectedEntity.GetComponent<TransformComponent>();
 				glm::mat4 transform = tc.GetTransform();
@@ -351,7 +358,8 @@ namespace ShawEngine {
 
 	void EditorLayer::OnEvent(Event& e)
 	{
-		m_CameraController.OnEvent(e);
+		//m_CameraController.OnEvent(e);
+		m_EditorCamera.OnEvent(e);
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<KeyPressedEvent>(SE_BIND_EVENT_FN(EditorLayer::OnKeyPressed));
 	}

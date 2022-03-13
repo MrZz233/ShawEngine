@@ -95,7 +95,7 @@ namespace ShawEngine {
 		FramebufferSpecification fbSpec;
 		fbSpec.Width = 1280;
 		fbSpec.Height = 720;
-		fbSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::Depth };
+		fbSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth }; 
 		m_Framebuffer = Framebuffer::Create(fbSpec);
 
 		//创建一个场景
@@ -170,9 +170,24 @@ namespace ShawEngine {
 		m_Framebuffer->Bind();
 		RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
 		RenderCommand::Clear();
+		m_Framebuffer->ClearAttachment(1, -1);
 		//Update场景
 		//Renderer2D::BeginScene(m_CameraController.GetCamera());
 		m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
+		auto [mx, my] = ImGui::GetMousePos();	//鼠标在整个屏幕上的位置
+		
+		mx -= m_ViewportBounds[0].x;
+		my -= m_ViewportBounds[0].y;
+		glm::vec2 viewportSize = m_ViewportBounds[1] - m_ViewportBounds[0];
+		my = viewportSize.y - my;
+		int mouseX = (int)mx;
+		int mouseY = (int)my;
+
+		if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)viewportSize.x && mouseY < (int)viewportSize.y)
+		{
+			int pixelData = m_Framebuffer->ReadPixel(1, mouseX, mouseY);
+			SE_CORE_WARN("Pixel data = {0}", pixelData);
+		}
 		//Renderer2D::EndScene();
 		m_Framebuffer->Unbind();
 
@@ -286,18 +301,24 @@ namespace ShawEngine {
 			ImGui::End();
 
 			ImGui::Begin("Viewport");
-			m_ViewportFocused = ImGui::IsWindowFocused();
-			m_ViewportHovered = ImGui::IsWindowHovered();
-			//BlockEvents为true   ImGui处理事件，
-			//没有聚焦  或者  没有悬浮  ImGui才处理事件
-			//等价于   聚焦且悬浮   ImGui不处理事件  
-			bool _block = !m_ViewportFocused && !m_ViewportHovered;
+			bool _block = !ImGui::IsWindowFocused() && !ImGui::IsWindowHovered();
 			Application::Get().GetImGuiLayer()->BlockEvents(_block);
+			
+			auto viewportOffset = ImGui::GetCursorPos(); // Includes tab bar
 			ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
 			m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
 			uint64_t TextureID = m_Framebuffer->GetColorAttachmentRendererID();
 			ImGui::Image(reinterpret_cast<void*>(TextureID), ImVec2{ viewportPanelSize.x, viewportPanelSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+			//auto windowSize = ImGui::GetWindowSize();
+			ImVec2 minBound = ImGui::GetWindowPos();	//GetWindowPos返回Viewport左上角在整个屏幕的位置
+			minBound.x += viewportOffset.x;
+			minBound.y += viewportOffset.y;	//viewport除去bar之后，左上角在在整个屏幕的位置
+			std::cout << minBound.x << "  " << minBound.y << "\n";
+			ImVec2 maxBound = { minBound.x + viewportPanelSize.x, minBound.y + viewportPanelSize.y };
+			m_ViewportBounds[0] = { minBound.x, minBound.y };
+			m_ViewportBounds[1] = { maxBound.x, maxBound.y };
 			
+			//Gizmos
 			Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
 			if (selectedEntity && m_GizmoType != -1)
 			{

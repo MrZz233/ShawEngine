@@ -12,10 +12,23 @@
 int main(int argc, char** argv);
 
 namespace ShawEngine {
+
+	struct ApplicationCommandLineArgs
+	{
+		int Count = 0;
+		char** Args = nullptr;
+
+		const char* operator[](int index) const
+		{
+			SE_CORE_ASSERT(index < Count);
+			return Args[index];
+		}
+	};
+
 	class Application
 	{
 	public:
-		Application(const std::string& name = "ShawEngine App");
+		Application(const std::string& name = "ShawEngine App", ApplicationCommandLineArgs args = ApplicationCommandLineArgs());
 		virtual ~Application();
 
 		void OnEvent(Event&);
@@ -27,11 +40,13 @@ namespace ShawEngine {
 		void Close();
 		ImGuiLayer* GetImGuiLayer() { return m_ImGuiLayer; }
 		static Application& Get() { return *s_Instance; }
+		ApplicationCommandLineArgs GetCommandLineArgs() const { return m_CommandLineArgs; }
 		bool OnWindowClose(WindowCloseEvent& e);
 	private:
 		void Run();
 		bool OnClosed(WindowCloseEvent&);
 		bool OnWindowResize(WindowResizeEvent& e);
+		ApplicationCommandLineArgs m_CommandLineArgs;
 		Scope<Window> m_Windows;
 		ImGuiLayer* m_ImGuiLayer;
 		bool m_Running = true;
@@ -44,5 +59,5 @@ namespace ShawEngine {
 	};
 
 	//用户定义
-	extern Application* CreateApplication();
+	Application* CreateApplication(ApplicationCommandLineArgs args);
 }

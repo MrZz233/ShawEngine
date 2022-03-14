@@ -5,12 +5,11 @@
 #include <GLFW/glfw3.h>
 #define GLFW_EXPOSE_NATIVE_WIN32
 #include <GLFW/glfw3native.h>
-
 #include "Engine/Core/Application.h"
 
 namespace ShawEngine {
 
-	std::optional<std::string> FileDialogs::OpenFile(const char* filter)
+	std::string FileDialogs::OpenFile(const char* filter)
 	{
 		OPENFILENAMEA ofn;
 		CHAR szFile[260] = { 0 };
@@ -32,7 +31,7 @@ namespace ShawEngine {
 		return std::string();
 	}
 
-	std::optional<std::string> FileDialogs::SaveFile(const char* filter)
+	std::string FileDialogs::SaveFile(const char* filter)
 	{
 		OPENFILENAMEA ofn;
 		CHAR szFile[260] = { 0 };
@@ -53,7 +52,7 @@ namespace ShawEngine {
 		{
 			return ofn.lpstrFile;
 		}
-		return std::nullopt;
+		return std::string();
 	}
 
 }

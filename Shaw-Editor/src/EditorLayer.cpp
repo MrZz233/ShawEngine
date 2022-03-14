@@ -101,6 +101,14 @@ namespace ShawEngine {
 		//创建一个场景
 		m_ActiveScene = CreateRef<Scene>();
 
+		auto commandLineArgs = Application::Get().GetCommandLineArgs();
+		if (commandLineArgs.Count > 1)
+		{
+			auto sceneFilePath = commandLineArgs[1];
+			SceneSerializer serializer(m_ActiveScene);
+			serializer.Deserialize(sceneFilePath);
+		}
+
 		m_EditorCamera = EditorCamera(30.0f, 1.778f, 1.0f, 1000.0f);
 #if 0
 		//创建一个square实体
@@ -185,8 +193,12 @@ namespace ShawEngine {
 
 		if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)viewportSize.x && mouseY < (int)viewportSize.y)
 		{
-			int pixelData = m_Framebuffer->ReadPixel(1, mouseX, mouseY);
-			SE_CORE_WARN("Pixel data = {0}", pixelData);
+			uint32_t pixelData = m_Framebuffer->ReadPixel(1, mouseX, mouseY);
+			m_HoveredEntity = pixelData == -1 ? Entity() : Entity((entt::entity)pixelData, m_ActiveScene.get());
+			//std::cout << "color2 = " <<pixelData << "\n";
+		}
+		else {
+			m_HoveredEntity = Entity();
 		}
 		//Renderer2D::EndScene();
 		m_Framebuffer->Unbind();
@@ -282,10 +294,19 @@ namespace ShawEngine {
 			}
 
 			m_SceneHierarchyPanel.OnImGuiRender();
+			m_ContentBrowserPanel.OnImGuiRender();
 
 			ImGui::Begin("Information:");
 			auto stats = Renderer2D::GetStats();
 			ImGui::Text("FPS: %d", fps);
+
+			std::string name = "None";
+			if (m_HoveredEntity) {
+				name = m_HoveredEntity.GetComponent<TagComponent>().Tag;
+			}
+				
+			ImGui::Text("Hovered Entity: %s", name.c_str());
+
 			ImGui::Text("Renderer2D Stats:");
 			ImGui::Text("Draw Calls: %d", stats.DrawCalls);
 			ImGui::Text("Quads: %d", stats.QuadCount);
@@ -301,7 +322,9 @@ namespace ShawEngine {
 			ImGui::End();
 
 			ImGui::Begin("Viewport");
-			bool _block = !ImGui::IsWindowFocused() && !ImGui::IsWindowHovered();
+			m_ViewportFocused = ImGui::IsWindowFocused();
+			m_ViewportHovered = ImGui::IsWindowHovered();
+			bool _block = !m_ViewportFocused && !m_ViewportHovered;
 			Application::Get().GetImGuiLayer()->BlockEvents(_block);
 			
 			auto viewportOffset = ImGui::GetCursorPos(); // Includes tab bar
@@ -313,7 +336,7 @@ namespace ShawEngine {
 			ImVec2 minBound = ImGui::GetWindowPos();	//GetWindowPos返回Viewport左上角在整个屏幕的位置
 			minBound.x += viewportOffset.x;
 			minBound.y += viewportOffset.y;	//viewport除去bar之后，左上角在在整个屏幕的位置
-			std::cout << minBound.x << "  " << minBound.y << "\n";
+			//std::cout << minBound.x << "  " << minBound.y << "\n";
 			ImVec2 maxBound = { minBound.x + viewportPanelSize.x, minBound.y + viewportPanelSize.y };
 			m_ViewportBounds[0] = { minBound.x, minBound.y };
 			m_ViewportBounds[1] = { maxBound.x, maxBound.y };
@@ -382,7 +405,10 @@ namespace ShawEngine {
 		//m_CameraController.OnEvent(e);
 		m_EditorCamera.OnEvent(e);
 		EventDispatcher dispatcher(e);
+		//std::cout << e.ToString()<< "\n";
+		dispatcher.Dispatch<MouseButtonPressedEvent>(SE_BIND_EVENT_FN(EditorLayer::OnMouseButtonPressed));
 		dispatcher.Dispatch<KeyPressedEvent>(SE_BIND_EVENT_FN(EditorLayer::OnKeyPressed));
+		//std::cout << "Event handled..." << "\n";
 	}
 
 	bool EditorLayer::OnKeyPressed(KeyPressedEvent& e)
@@ -406,30 +432,44 @@ namespace ShawEngine {
 			{
 				if (control)
 					OpenScene();
-
 				break;
 			}
 			case Key::S:
 			{
 				if (control && shift)
 					SaveSceneAs();
-
 				break;
 			}
 			// Gizmos
 			case Key::Q:
-				m_GizmoType = -1;
+				if (!ImGuizmo::IsUsing())
+					m_GizmoType = -1;
 				break;
 			case Key::W:
-				m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
+				if (!ImGuizmo::IsUsing())
+					m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
 				break;
 			case Key::E:
-				m_GizmoType = ImGuizmo::OPERATION::ROTATE;
+				if (!ImGuizmo::IsUsing())
+					m_GizmoType = ImGuizmo::OPERATION::ROTATE;
 				break;
 			case Key::R:
-				m_GizmoType = ImGuizmo::OPERATION::SCALE;
+				if (!ImGuizmo::IsUsing())
+					m_GizmoType = ImGuizmo::OPERATION::SCALE;
 				break;
 		}
+		return false;
+	}
+
+	bool EditorLayer::OnMouseButtonPressed(MouseButtonPressedEvent& e)
+	{
+		if (e.GetMouseButton() == Mouse::ButtonLeft)
+		{
+			if (m_ViewportHovered && !ImGuizmo::IsOver() && !Input::IsKeyPressed(Key::LeftAlt))
+				m_SceneHierarchyPanel.SetSelectedEntity(m_HoveredEntity);
+			std::cout << "Entity: " << (uint32_t)m_HoveredEntity << "\n";
+		}
+		return false;
 	}
 
 	void EditorLayer::NewScene()
@@ -441,25 +481,25 @@ namespace ShawEngine {
 
 	void EditorLayer::OpenScene()
 	{
-		std::optional<std::string> filepath = FileDialogs::OpenFile("Scene (*.sc)\0*.sc\0");
-		if (filepath)
+		std::string filepath = FileDialogs::OpenFile("Scene (*.sc)\0*.sc\0");
+		if (!filepath.empty())
 		{
 			m_ActiveScene = CreateRef<Scene>();
 			m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 			m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 
 			SceneSerializer serializer(m_ActiveScene);
-			serializer.Deserialize(*filepath);
+			serializer.Deserialize(filepath);
 		}
 	}
 
 	void EditorLayer::SaveSceneAs()
 	{
-		std::optional<std::string> filepath = FileDialogs::SaveFile("Scene (*.sc)\0*.sc\0");
-		if (filepath)
+		std::string filepath = FileDialogs::SaveFile("Scene (*.sc)\0*.sc\0");
+		if (!filepath.empty())
 		{
 			SceneSerializer serializer(m_ActiveScene);
-			serializer.Serialize(*filepath);
+			serializer.Serialize(filepath);
 		}
 	}
 

@@ -75,6 +75,11 @@ namespace ShawEngine {
 		ImGui::End();
 	}
 
+	void SceneHierarchyPanel::SetSelectedEntity(Entity entity)
+	{
+		m_SelectionContext = entity;
+	}
+
 	//ªÊ÷∆ µÃÂ
 	void SceneHierarchyPanel::DrawEntityNode(Entity entity)
 	{

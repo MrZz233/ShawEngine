@@ -2,6 +2,7 @@
 
 #include "Engine.h"
 #include "Panels/SceneHierarchyPanel.h"
+#include "Panels/ContentBrowserPanel.h"
 #include "Engine/Renderer/EditorCamera.h"
 
 namespace ShawEngine {
@@ -22,7 +23,7 @@ namespace ShawEngine {
 	
 	private:
 		bool OnKeyPressed(KeyPressedEvent& e);
-
+		bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
 		void NewScene();
 		void OpenScene();
 		void SaveSceneAs();
@@ -48,10 +49,11 @@ namespace ShawEngine {
 		glm::vec2 m_ViewportBounds[2];
 		glm::vec4 m_SquareColor = { 0.2f, 0.3f, 0.8f, 1.0f };
 		uint32_t fps = 0;
-
+		Entity m_HoveredEntity;
 		static bool m_ViewportFocused, m_ViewportHovered;
 		int m_GizmoType = -1;
 		// Panels
 		SceneHierarchyPanel m_SceneHierarchyPanel;
+		ContentBrowserPanel m_ContentBrowserPanel;
 	};
 }

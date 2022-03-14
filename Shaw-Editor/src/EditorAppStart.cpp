@@ -8,8 +8,8 @@ namespace ShawEngine {
 	class ShawEngineEditor : public Application
 	{
 	public:
-		ShawEngineEditor()
-			: Application("ShawEngine Editor")
+		ShawEngineEditor(ApplicationCommandLineArgs args)
+			: Application("ShawEngine Editor", args)
 		{
 			PushLayer(new EditorLayer());
 		}
@@ -19,9 +19,9 @@ namespace ShawEngine {
 		}
 	};
 
-	Application* CreateApplication()
+	Application* CreateApplication(ApplicationCommandLineArgs args)
 	{
-		return new ShawEngineEditor();
+		return new ShawEngineEditor(args);
 	}
 
 }

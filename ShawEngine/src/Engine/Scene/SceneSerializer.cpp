@@ -178,7 +178,15 @@ namespace ShawEngine {
 
 	bool SceneSerializer::Deserialize(const std::string& filepath)
 	{
-		YAML::Node data = YAML::LoadFile(filepath);
+		YAML::Node data;
+		try
+		{
+			data = YAML::LoadFile(filepath);
+		}
+		catch (YAML::ParserException e)
+		{
+			return false;
+		}
 
 		std::string sceneName = data["Scene"].as<std::string>();
 		SE_CORE_TRACE("Deserializing scene '{0}'", sceneName);

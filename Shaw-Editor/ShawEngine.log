@@ -1,30 +1,48 @@
-[15:26:58] [info] ShawEngine: Creating window ShawEngine Editor (1600, 900)
-[15:26:58] [info] ShawEngine: Initializing GLFW
-[15:26:59] [info] ShawEngine: OpenGL Info:
-[15:26:59] [info] ShawEngine:   Vendor: NVIDIA Corporation
-[15:26:59] [info] ShawEngine:   Renderer: NVIDIA GeForce GTX 1050 Ti/PCIe/SSE2
-[15:26:59] [info] ShawEngine:   Version: 4.6.0 NVIDIA 511.79
-[15:26:59] [trace] ShawEngine: OpenGLShader::Reflect - GL_VERTEX_SHADER assets/shaders/Texture.glsl
-[15:26:59] [trace] ShawEngine:     1 uniform buffers
-[15:26:59] [trace] ShawEngine:     0 resources
-[15:26:59] [trace] ShawEngine: Uniform buffers:
-[15:26:59] [trace] ShawEngine:   _46_48
-[15:26:59] [trace] ShawEngine:     Size = 64
-[15:26:59] [trace] ShawEngine:     Binding = 0
-[15:26:59] [trace] ShawEngine:     Members = 1
-[15:26:59] [trace] ShawEngine: OpenGLShader::Reflect - GL_FRAGMENT_SHADER assets/shaders/Texture.glsl
-[15:26:59] [trace] ShawEngine:     0 uniform buffers
-[15:26:59] [trace] ShawEngine:     1 resources
-[15:26:59] [trace] ShawEngine: Uniform buffers:
-[15:26:59] [warning] ShawEngine: Shader creation took 24.5834 ms
-[15:27:04] [trace] ShawEngine: Deserializing scene 'Untitled'
-[15:27:04] [trace] ShawEngine: Deserialized entity with ID = 12837192831273, name = Plane
-[15:27:04] [trace] ShawEngine: Deserialized entity with ID = 12837192831273, name = Grown Square
-[15:27:04] [trace] ShawEngine: Deserialized entity with ID = 12837192831273, name = Purple Square
-[15:27:04] [trace] ShawEngine: Deserialized entity with ID = 12837192831273, name = Yellow Square
-[15:27:04] [trace] ShawEngine: Deserialized entity with ID = 12837192831273, name = Bule Square
-[15:27:04] [trace] ShawEngine: Deserialized entity with ID = 12837192831273, name = Camera B
-[15:27:04] [trace] ShawEngine: Deserialized entity with ID = 12837192831273, name = Camera A
-[15:27:04] [trace] ShawEngine: Deserialized entity with ID = 12837192831273, name = Red Square
-[15:27:04] [trace] ShawEngine: Deserialized entity with ID = 12837192831273, name = Green Square
-[15:27:42] [info] ShawEngine: Terminating GLFW
+[17:02:37] [info] ShawEngine: Creating window ShawEngine Editor (1600, 900)
+[17:02:37] [info] ShawEngine: Initializing GLFW
+[17:02:38] [info] ShawEngine: OpenGL Info:
+[17:02:38] [info] ShawEngine:   Vendor: NVIDIA Corporation
+[17:02:38] [info] ShawEngine:   Renderer: NVIDIA GeForce GTX 1050 Ti/PCIe/SSE2
+[17:02:38] [info] ShawEngine:   Version: 4.6.0 NVIDIA 511.79
+[17:02:38] [trace] ShawEngine: OpenGLShader::Reflect - GL_VERTEX_SHADER assets/shaders/Texture.glsl
+[17:02:38] [trace] ShawEngine:     1 uniform buffers
+[17:02:38] [trace] ShawEngine:     0 resources
+[17:02:38] [trace] ShawEngine: Uniform buffers:
+[17:02:38] [trace] ShawEngine:   _46_48
+[17:02:38] [trace] ShawEngine:     Size = 64
+[17:02:38] [trace] ShawEngine:     Binding = 0
+[17:02:38] [trace] ShawEngine:     Members = 1
+[17:02:38] [trace] ShawEngine: OpenGLShader::Reflect - GL_FRAGMENT_SHADER assets/shaders/Texture.glsl
+[17:02:38] [trace] ShawEngine:     0 uniform buffers
+[17:02:38] [trace] ShawEngine:     1 resources
+[17:02:38] [trace] ShawEngine: Uniform buffers:
+[17:02:38] [warning] ShawEngine: Shader creation took 23.712105 ms
+[17:02:43] [trace] ShawEngine: Deserializing scene 'Untitled'
+[17:02:43] [trace] ShawEngine: Deserialized entity with ID = 12837192831273, name = Top
+[17:02:43] [trace] ShawEngine: Deserialized entity with ID = 12837192831273, name = Camera
+[17:02:43] [trace] ShawEngine: Deserialized entity with ID = 12837192831273, name = Right
+[17:02:43] [trace] ShawEngine: Deserialized entity with ID = 12837192831273, name = Left
+[17:02:44] [trace] ShawEngine: Deserializing scene 'Untitled'
+[17:02:44] [trace] ShawEngine: Deserialized entity with ID = 12837192831273, name = Plane
+[17:02:44] [trace] ShawEngine: Deserialized entity with ID = 12837192831273, name = Grown Square
+[17:02:44] [trace] ShawEngine: Deserialized entity with ID = 12837192831273, name = Purple Square
+[17:02:44] [trace] ShawEngine: Deserialized entity with ID = 12837192831273, name = Yellow Square
+[17:02:44] [trace] ShawEngine: Deserialized entity with ID = 12837192831273, name = Bule Square
+[17:02:44] [trace] ShawEngine: Deserialized entity with ID = 12837192831273, name = Camera B
+[17:02:44] [trace] ShawEngine: Deserialized entity with ID = 12837192831273, name = Camera A
+[17:02:44] [trace] ShawEngine: Deserialized entity with ID = 12837192831273, name = Red Square
+[17:02:44] [trace] ShawEngine: Deserialized entity with ID = 12837192831273, name = Green Square
+[17:03:22] [warning] APP: Could not load LelouchLogo.png - not a scene file
+[17:04:37] [trace] ShawEngine: Deserializing scene 'Untitled'
+[17:04:37] [trace] ShawEngine: Deserialized entity with ID = 12837192831273, name = Empty Entity
+[17:04:37] [trace] ShawEngine: Deserialized entity with ID = 12837192831273, name = Green Square
+[17:04:37] [trace] ShawEngine: Deserialized entity with ID = 12837192831273, name = Red Square
+[17:04:37] [trace] ShawEngine: Deserialized entity with ID = 12837192831273, name = Camera A
+[17:04:37] [trace] ShawEngine: Deserialized entity with ID = 12837192831273, name = Camera B
+[17:04:37] [trace] ShawEngine: Deserialized entity with ID = 12837192831273, name = Bule Square
+[17:04:37] [trace] ShawEngine: Deserialized entity with ID = 12837192831273, name = Yellow Square
+[17:04:37] [trace] ShawEngine: Deserialized entity with ID = 12837192831273, name = Purple Square
+[17:04:37] [trace] ShawEngine: Deserialized entity with ID = 12837192831273, name = Grown Square
+[17:04:37] [trace] ShawEngine: Deserialized entity with ID = 12837192831273, name = Plane
+[17:06:03] [warning] APP: Could not load LelouchLogo.png - not a scene file
+[17:06:18] [info] ShawEngine: Terminating GLFW

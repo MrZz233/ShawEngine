@@ -13,6 +13,8 @@
 
 namespace ShawEngine {
 
+	extern const std::filesystem::path g_AssetPath;
+
 	class CameraController : public ScriptableEntity
 	{
 	public:
@@ -139,9 +141,6 @@ namespace ShawEngine {
 		m_CameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
 		m_SecondCamera.AddComponent<NativeScriptComponent>().Bind<CameraController>();
 #endif
-
-
-
 		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 	}
 
@@ -176,7 +175,7 @@ namespace ShawEngine {
 		Renderer2D::ResetStats();
 		//清空背景
 		m_Framebuffer->Bind();
-		RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
+		RenderCommand::SetClearColor({ 0.2f, 0.4f, 0.4f, 1 });
 		RenderCommand::Clear();
 		m_Framebuffer->ClearAttachment(1, -1);
 		//Update场景
@@ -332,6 +331,16 @@ namespace ShawEngine {
 			m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
 			uint64_t TextureID = m_Framebuffer->GetColorAttachmentRendererID();
 			ImGui::Image(reinterpret_cast<void*>(TextureID), ImVec2{ viewportPanelSize.x, viewportPanelSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+			
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+				{
+					const wchar_t* path = (const wchar_t*)payload->Data;
+					OpenScene(std::filesystem::path(g_AssetPath) / path);
+				}
+				ImGui::EndDragDropTarget();
+			}
 			//auto windowSize = ImGui::GetWindowSize();
 			ImVec2 minBound = ImGui::GetWindowPos();	//GetWindowPos返回Viewport左上角在整个屏幕的位置
 			minBound.x += viewportOffset.x;
@@ -483,14 +492,17 @@ namespace ShawEngine {
 	{
 		std::string filepath = FileDialogs::OpenFile("Scene (*.sc)\0*.sc\0");
 		if (!filepath.empty())
-		{
-			m_ActiveScene = CreateRef<Scene>();
-			m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
-			m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+			OpenScene(filepath);
+	}
 
-			SceneSerializer serializer(m_ActiveScene);
-			serializer.Deserialize(filepath);
-		}
+	void EditorLayer::OpenScene(const std::filesystem::path& path)
+	{
+		m_ActiveScene = CreateRef<Scene>();
+		m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+
+		SceneSerializer serializer(m_ActiveScene);
+		serializer.Deserialize(path.string());
 	}
 
 	void EditorLayer::SaveSceneAs()

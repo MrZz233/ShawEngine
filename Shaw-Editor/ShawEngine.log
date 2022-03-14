@@ -1,19 +1,30 @@
-[13:18:52] [info] ShawEngine: Creating window ShawEngine Editor (1600, 900)
-[13:18:52] [info] ShawEngine: Initializing GLFW
-[13:18:53] [info] ShawEngine: OpenGL Info:
-[13:18:53] [info] ShawEngine:   Vendor: NVIDIA Corporation
-[13:18:53] [info] ShawEngine:   Renderer: NVIDIA GeForce GTX 1050 Ti/PCIe/SSE2
-[13:18:53] [info] ShawEngine:   Version: 4.6.0 NVIDIA 511.79
-[13:18:53] [trace] ShawEngine: OpenGLShader::Reflect - GL_VERTEX_SHADER assets/shaders/Texture.glsl
-[13:18:53] [trace] ShawEngine:     1 uniform buffers
-[13:18:53] [trace] ShawEngine:     0 resources
-[13:18:53] [trace] ShawEngine: Uniform buffers:
-[13:18:53] [trace] ShawEngine:   _47_49
-[13:18:53] [trace] ShawEngine:     Size = 64
-[13:18:53] [trace] ShawEngine:     Binding = 0
-[13:18:53] [trace] ShawEngine:     Members = 1
-[13:18:53] [trace] ShawEngine: OpenGLShader::Reflect - GL_FRAGMENT_SHADER assets/shaders/Texture.glsl
-[13:18:53] [trace] ShawEngine:     0 uniform buffers
-[13:18:53] [trace] ShawEngine:     1 resources
-[13:18:53] [trace] ShawEngine: Uniform buffers:
-[13:18:53] [warning] ShawEngine: Shader creation took 25.627203 ms
+[15:26:58] [info] ShawEngine: Creating window ShawEngine Editor (1600, 900)
+[15:26:58] [info] ShawEngine: Initializing GLFW
+[15:26:59] [info] ShawEngine: OpenGL Info:
+[15:26:59] [info] ShawEngine:   Vendor: NVIDIA Corporation
+[15:26:59] [info] ShawEngine:   Renderer: NVIDIA GeForce GTX 1050 Ti/PCIe/SSE2
+[15:26:59] [info] ShawEngine:   Version: 4.6.0 NVIDIA 511.79
+[15:26:59] [trace] ShawEngine: OpenGLShader::Reflect - GL_VERTEX_SHADER assets/shaders/Texture.glsl
+[15:26:59] [trace] ShawEngine:     1 uniform buffers
+[15:26:59] [trace] ShawEngine:     0 resources
+[15:26:59] [trace] ShawEngine: Uniform buffers:
+[15:26:59] [trace] ShawEngine:   _46_48
+[15:26:59] [trace] ShawEngine:     Size = 64
+[15:26:59] [trace] ShawEngine:     Binding = 0
+[15:26:59] [trace] ShawEngine:     Members = 1
+[15:26:59] [trace] ShawEngine: OpenGLShader::Reflect - GL_FRAGMENT_SHADER assets/shaders/Texture.glsl
+[15:26:59] [trace] ShawEngine:     0 uniform buffers
+[15:26:59] [trace] ShawEngine:     1 resources
+[15:26:59] [trace] ShawEngine: Uniform buffers:
+[15:26:59] [warning] ShawEngine: Shader creation took 24.5834 ms
+[15:27:04] [trace] ShawEngine: Deserializing scene 'Untitled'
+[15:27:04] [trace] ShawEngine: Deserialized entity with ID = 12837192831273, name = Plane
+[15:27:04] [trace] ShawEngine: Deserialized entity with ID = 12837192831273, name = Grown Square
+[15:27:04] [trace] ShawEngine: Deserialized entity with ID = 12837192831273, name = Purple Square
+[15:27:04] [trace] ShawEngine: Deserialized entity with ID = 12837192831273, name = Yellow Square
+[15:27:04] [trace] ShawEngine: Deserialized entity with ID = 12837192831273, name = Bule Square
+[15:27:04] [trace] ShawEngine: Deserialized entity with ID = 12837192831273, name = Camera B
+[15:27:04] [trace] ShawEngine: Deserialized entity with ID = 12837192831273, name = Camera A
+[15:27:04] [trace] ShawEngine: Deserialized entity with ID = 12837192831273, name = Red Square
+[15:27:04] [trace] ShawEngine: Deserialized entity with ID = 12837192831273, name = Green Square
+[15:27:42] [info] ShawEngine: Terminating GLFW

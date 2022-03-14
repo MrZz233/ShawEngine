@@ -5,7 +5,7 @@
 #include "ExampleLayer.h"
 class AppStart :public ShawEngine::Application {
 public:
-	AppStart() {
+	AppStart(ShawEngine::ApplicationCommandLineArgs args) {
 		//PushLayer(new ExampleLayer());
 		PushLayer(new AppStart2D());
 	}
@@ -16,6 +16,7 @@ public:
 
 };
 
-ShawEngine::Application* ShawEngine::CreateApplication() {
-	return new AppStart();
+ShawEngine::Application* ShawEngine::CreateApplication(ShawEngine::ApplicationCommandLineArgs args)
+{
+	return new AppStart(args);
 }

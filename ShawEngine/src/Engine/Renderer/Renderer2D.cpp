@@ -134,11 +134,8 @@ namespace ShawEngine {
 	void Renderer2D::BeginScene(const OrthographicCamera& camera)
 	{
 		SE_PROFILE_FUNCTION();
-		//绑定Shader
-		s_Data.TextureShader->Bind();
-		//设置相机
-		s_Data.TextureShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
-		
+		s_Data.CameraBuffer.ViewProjection = camera.GetViewProjectionMatrix();
+		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(Renderer2DData::CameraData));
 		StartBatch();
 		
 	}
@@ -185,7 +182,7 @@ namespace ShawEngine {
 		if (s_Data.QuadIndexCount == 0)
 			return;
 
-		//计算需要上传的VBO大小  VBO指针 - VBO基址
+		//计算需要上传的VBO大小  VBO指针 - VBO基址(字节数，所以需要转为uint8_t*)
 		uint32_t dataSize = (uint32_t)((uint8_t*)s_Data.QuadVertexBufferPtr - (uint8_t*)s_Data.QuadVertexBufferBase);
 		//设置VBO的内容
 		s_Data.QuadVertexBuffer->SetData(s_Data.QuadVertexBufferBase, dataSize);
@@ -288,7 +285,7 @@ namespace ShawEngine {
 			//匹配当前纹理和纹理槽中的纹理
 			if (*(s_Data.TextureSlots[i]) == *texture)
 			{
-				textureIndex = (float)i;
+				textureIndex = i;
 				break;
 			}
 		}
@@ -297,6 +294,7 @@ namespace ShawEngine {
 		if (textureIndex == 0.0f)
 		{
 			textureIndex = (float)s_Data.TextureSlotIndex;
+			//textureIndex = (float)s_Data.TextureSlotIndex;
 			s_Data.TextureSlots[s_Data.TextureSlotIndex] = texture;
 			s_Data.TextureSlotIndex++;
 			if (s_Data.TextureSlotIndex >= Renderer2DData::MaxTextureSlots)
@@ -354,7 +352,10 @@ namespace ShawEngine {
 
 	void Renderer2D::DrawSprite(const glm::mat4& transform, SpriteRendererComponent& src, int entityID)
 	{
-		DrawQuad(transform, src.Color, entityID);
+		if (src.Texture)
+			DrawQuad(transform, src.Texture, src.TilingFactor, src.Color, entityID);
+		else
+			DrawQuad(transform, src.Color, entityID);
 	}
 
 	void Renderer2D::ResetStats()
